@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Dr. Simon Rogers (simon.rogers@glasgow.ac.uk, @sdrogers)" />
+  <title>Advanced Programming (IT)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="pandoc.css" type="text/css" />
+</head>
+<body>
+<div id="header">
+<h1 class="title">Advanced Programming (IT)</h1>
+<h2 class="author">Dr. Simon Rogers (simon.rogers@glasgow.ac.uk, <span class="citation">@sdrogers</span>)</h2>
+<h3 class="date">January 2018</h3>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#introduction-to-git">Introduction to git</a></li>
+<li><a href="#what-does-git-do">What does git do?</a></li>
+<li><a href="#try-it">Try it!</a></li>
+<li><a href="#basic-operation">Basic operation</a></li>
+<li><a href="#adding-files">Adding files</a></li>
+<li><a href="#standard-commit-command">Standard Commit command</a></li>
+<li><a href="#branches">Branches</a></li>
+<li><a href="#git-v-github">Git v github</a></li>
+<li><a href="#synchronising-with-a-remote-repository">Synchronising with a remote repository</a></li>
+<li><a href="#conflicts">Conflicts</a></li>
+<li><a href="#git-tips">Git tips</a></li>
+</ul>
+</div>
+<h2 id="motivation">Motivation</h2>
+<ul>
+<li>It's important to keep track of changes to code</li>
+<li>Especially when working in a team</li>
+<li><em>Version Control</em> systems allow us to do this</li>
+<li>Most popular: <strong>Subversion</strong> and <strong>git</strong></li>
+</ul>
+<h2 id="introduction-to-git">Introduction to git</h2>
+<ul>
+<li><em>Warning</em> Git has a steep learning curve
+<ul>
+<li>..but it's worth it</li>
+</ul></li>
+<li>This is based upon the excellent tutorials at <a href="http://git-scm.com"></a></li>
+</ul>
+<h2 id="what-does-git-do">What does git do?</h2>
+<ul>
+<li>Git keeps track of files in a directory and its subdirectories</li>
+<li>Keep track?
+<ul>
+<li>remembers all changes</li>
+<li>allows you to rewind changes</li>
+<li>allows you to see what other people have done</li>
+<li>allows you to create independent <em>branches</em></li>
+</ul></li>
+</ul>
+<h2 id="try-it">Try it!</h2>
+<ul>
+<li>Navigate to a directory you wish to version control with git</li>
+<li>issue <code>git init</code></li>
+<li>Folder is now a git repository!</li>
+</ul>
+<h2 id="basic-operation">Basic operation</h2>
+<ul>
+<li>Change something (change file, add file, remove file)</li>
+<li>Add changed file to <em>Staging Area</em></li>
+<li><em>Commit</em> changes</li>
+</ul>
+<div class="figure">
+<img src="figures/git_stages.png" alt="The three components of Git (figure from git-scm.com)" />
+<p class="caption">The three components of Git (figure from git-scm.com)</p>
+</div>
+<h2 id="adding-files">Adding files</h2>
+<ul>
+<li>When a file is created, you <em>have</em> to tell git about it:
+<ul>
+<li><code>git add myfile.java</code></li>
+</ul></li>
+<li>To <em>Commit</em> the changes
+<ul>
+<li><code>git commit -m &quot;added some files&quot;</code></li>
+</ul></li>
+<li>If you get stuck, <code>git status</code> is your friend!</li>
+</ul>
+<h2 id="standard-commit-command">Standard Commit command</h2>
+<ul>
+<li>Normally you will be commiting changes to existing files.</li>
+<li>They still need to be added to the Staging Area</li>
+<li>Shortcut, use <code>-a</code>
+<ul>
+<li><code>git commit -a -m &quot;changed some files&quot;</code></li>
+</ul></li>
+<li>This adds any changed files <strong>that git is aware of</strong> to the staging area and then commits</li>
+</ul>
+<p>## Jumping to a previous commit</p>
+<ul>
+<li>Each commit has a unique ID</li>
+<li>You can jump to it with:
+<ul>
+<li><code>git checkout &lt;ID&gt;</code></li>
+</ul></li>
+<li>Try this and be amazed at how the contents of the repository immediately change!</li>
+</ul>
+<h2 id="branches">Branches</h2>
+<ul>
+<li>Git's true power lies in <em>branches</em></li>
+<li>Branches allow you to switch between different versions of your repository</li>
+<li>When you create a repo, you have one branch (called <strong>Master</strong>)
+<ul>
+<li>The name <strong>Master</strong> is <em>just a convention</em> -- it's not special</li>
+</ul></li>
+<li>You can switch between brances at any time with:
+<ul>
+<li><code>git checkout &lt;branchname&gt;</code></li>
+</ul></li>
+<li>And create new branches with:
+<ul>
+<li><code>git checkout -b &lt;newbranchname&gt;</code></li>
+</ul></li>
+<li>You can also merge a branch (e.g. newfeature) into the current branch with:
+<ul>
+<li><code>git merge newfeature</code></li>
+</ul></li>
+</ul>
+<p>Branches are one of the reasons for git's popularity. There's a great tutorial <a href="https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging">here</a>. Note that in that example the commits go from left to right. Having a main branch and calling it <strong>Master</strong> is just a convention. No branch in git has any intrinsic priority over another. A standard use case for branching would be:</p>
+<pre><code>1. Identify an issue or new feature for your code
+2. Create a new branch (from e.g. `Master`) (`git checkout -b mybranch`)
+3. Work to solve the problem on that branch
+4. Test etc
+5. Commit your changes (`git commit -a -m &quot;fixed the issue...yay&quot;`)
+6. When ready merge your new branch back into `master`
+7. `git checkout master`
+8. `git merge mybranch`
+9. Repeat...</code></pre>
+<h2 id="git-v-github">Git v github</h2>
+<ul>
+<li>Common error: git and github are the same thing. Not true!</li>
+<li><strong>Git</strong>: version control system</li>
+<li><strong>Github</strong>: website that will host repositories for you</li>
+<li>All notes and code for this course are available on github: <a href="http://github.com/sdrogers/APIT" class="uri">http://github.com/sdrogers/APIT</a></li>
+<li>Github also has useful features like issue tracking</li>
+</ul>
+<p>Github etc just host a copy of your repository. There's nothing special about the repository they store, although by convention it's normally considered to be the <em>main</em> copy.</p>
+<h2 id="synchronising-with-a-remote-repository">Synchronising with a remote repository</h2>
+<ul>
+<li>Easiest way: clone an already existing repo.
+<ul>
+<li>e.g. <code>git clone https://github.com/sdrogers/APIT.git</code></li>
+</ul></li>
+<li>Can also setup a <code>remote</code> for a pre-existing repo (see online docs)</li>
+<li>To merge a branch (<code>master</code>) from the remote (<code>origin</code>) to the current local branch:
+<ul>
+<li><code>git pull origin master</code></li>
+</ul></li>
+<li>This grabs the <code>master</code> branch from the server and merges it with whichever branch is checked out locally.</li>
+<li>To send your changes to the server:
+<ul>
+<li><code>git push origin master</code></li>
+</ul></li>
+<li>This sends the current local branch to the server and merges it into the <code>master</code> branch there</li>
+</ul>
+<p>You can also get the changes from the server without merging into the current branch using <code>fetch</code> instead of <code>pull</code>.</p>
+<h2 id="conflicts">Conflicts</h2>
+<ul>
+<li>You <strong>will</strong> get merge conflicts (where the same file has changed in both branches)</li>
+<li>Don't panic!</li>
+<li>Do <code>git status</code> and follow the instructions</li>
+</ul>
+<h2 id="git-tips">Git tips</h2>
+<ul>
+<li>Play around with an unimportant repository</li>
+<li>Create something on github and play with other people (you'll quickly learn about conflicts)</li>
+<li>Applications like <em>SourceTree</em> are handy to look over commit histories (unless you have hardcore command line skills)</li>
+<li>Big binary files (e.g. .pdf, .class, .sqlite) are often problematic</li>
+<li><code>git status</code></li>
+</ul>
+</body>
+</html>
