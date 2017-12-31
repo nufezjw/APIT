@@ -89,6 +89,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#hashset">HashSet</a></li>
 <li><a href="#hashmap">HashMap</a></li>
 </ul></li>
+<li><a href="#generics">Generics</a><ul>
+<li><a href="#arraylist-1"> ArrayList</a></li>
+<li><a href="#creating-generic-objects">Creating generic objects</a></li>
+</ul></li>
 <li><a href="#testing">Testing</a><ul>
 <li><a href="#debugging">Debugging</a></li>
 <li><a href="#unit-testing">Unit testing</a></li>
@@ -162,7 +166,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li>Some languages are interpreted line by line as they are run
 <ul>
-<li>e.g. Matlab, Python</li>
+<li>e.g. Matlab</li>
 </ul></li>
 <li>Java is a bit different
 <ul>
@@ -199,7 +203,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>What are objects?</li>
 <li>Why program with objects?</li>
 <li>Why not program with objects?</li>
-<li><a href="http://duramecho.com/ComputerInformation/WhatIsObjectOrientedProgramming.html">Useful link</a></li>
+<li><a href="http://duramecho.com/ComputerInformation/WhatIsObjectOrientedProgramming.html">Homework: read this</a></li>
 </ul>
 <hr />
 <h2 id="classes">Classes</h2>
@@ -231,7 +235,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>i.e. we can create objects of their type (e.g. <code>Pet</code>, <code>Dog</code>, etc)</li>
 </ul></li>
 <li>Java allows you to define classes that cannot be instantiated: <strong>Abstract classes</strong></li>
-<li>Abstract classes cannot be - they can only be sub-classed
+<li>Abstract classes can only be sub-classed
 <ul>
 <li>e.g. <code>AbstractPet</code>, <code>Cat</code> and <code>AbstractPetTest</code></li>
 </ul></li>
@@ -318,6 +322,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Each thread has its own stack
 <ul>
 <li>All programs have at least one thread</li>
+<li>In your programmes so far, there is one thread</li>
 </ul></li>
 </ul>
 <hr />
@@ -631,13 +636,14 @@ a+=<span class="st">&quot; simon&quot;</span>;</code></pre></div>
 <h2 id="final">Final</h2>
 <ul>
 <li>It is good practice to make as many things <code>final</code> as possible</li>
+<li>Make as many attributes <code>final</code> as possible</li>
 <li>Stops other people doing bad things to your code
 <ul>
 <li><code>final</code> classes can not be sub-classed</li>
 <li><code>final</code> methods can not be overloaded</li>
 <li><code>final</code> variables cannot be modified once declared</li>
 </ul></li>
-<li><code>final</code> does not necessarily mean <code>immutable</code></li>
+<li><code>final</code> is not the same as <code>immutable</code></li>
 <li><code>FinalTest</code> and <code>FinalTestFixed</code></li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> FinalTest {
@@ -681,7 +687,7 @@ a+=<span class="st">&quot; simon&quot;</span>;</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ArrayList&lt;Integer&gt; a = <span class="kw">new</span> ArrayList();
 a.<span class="fu">add</span>(<span class="dv">3</span>);
 a.<span class="fu">add</span>(<span class="dv">5</span>);
-System.<span class="fu">out</span>.<span class="fu">println</span>(a.<span class="fu">contains</span>(<span class="dv">4</span>)); <span class="co">// Checks is 4 is in there</span></code></pre></div>
+System.<span class="fu">out</span>.<span class="fu">println</span>(a.<span class="fu">contains</span>(<span class="dv">4</span>)); <span class="co">// Checks is 4 is in a</span></code></pre></div>
 <p>Be careful of arraylists of integers. Various arraylist methods are overloaded to take an object or an integer as the argument (e.g. remove()). This can get very confusing!</p>
 <hr />
 <h2 id="hashset">HashSet</h2>
@@ -695,7 +701,7 @@ System.<span class="fu">out</span>.<span class="fu">println</span>(a.<span class
     h.<span class="fu">contains</span>(<span class="st">&quot;hello&quot;</span>); <span class="co">// returns true</span>
     h.<span class="fu">remove</span>(<span class="st">&quot;simon&quot;</span>); <span class="co">// removes this one</span></code></pre></div>
 <ul>
-<li>Very fast for checking if an item is in there</li>
+<li>Very fast for checking if an item is in the set</li>
 </ul>
 <hr />
 <h2 id="hashmap">HashMap</h2>
@@ -710,6 +716,58 @@ System.<span class="fu">out</span>.<span class="fu">println</span>(a.<span class
 <ul>
 <li>Very fast for obtaining items for a particular key</li>
 </ul>
+<hr />
+<h1 id="generics">Generics</h1>
+<h2 id="arraylist-1"> ArrayList</h2>
+<ul>
+<li>What is the <code>&lt;Double&gt;</code> for in <code>ArrayList</code>?</li>
+<li>It is a <code>generic</code></li>
+<li>i.e. <code>ArrayList</code> can work with any type (specified when you create it)</li>
+<li>You can make classes with generics too...</li>
+</ul>
+<hr />
+<h2 id="creating-generic-objects">Creating generic objects</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> MyClass&lt;T&gt; {
+    <span class="kw">private</span> T t;
+    <span class="kw">public</span> <span class="fu">MyClass</span>(T t) {
+        <span class="kw">this</span>.<span class="fu">t</span> = t;
+    }
+}</code></pre></div>
+<ul>
+<li>In the code above <code>T</code> can be any class</li>
+<li>Can also have multiple types in the definition (<code>&lt;A,B,C,D&gt;</code>)</li>
+<li>See <code>Dictionary.java</code></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import java.util.ArrayList;</span>
+<span class="co">// A hacky alternative to HashMaps to demonstrate</span>
+<span class="co">// making a class with generics</span>
+<span class="kw">public</span> <span class="kw">class</span> Dictionary&lt;A,B&gt; {
+    <span class="kw">private</span> ArrayList&lt;A&gt; listA = <span class="kw">new</span> ArrayList&lt;A&gt;();
+    <span class="kw">private</span> ArrayList&lt;B&gt; listB = <span class="kw">new</span> ArrayList&lt;B&gt;();
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">add</span>(A a,B b) {
+        listA.<span class="fu">add</span>(a);
+        listB.<span class="fu">add</span>(b);
+    }
+    <span class="kw">public</span> B <span class="fu">getDefinition</span>(A a) {
+        <span class="dt">int</span> index = listA.<span class="fu">indexOf</span>(a);
+        <span class="kw">return</span> listB.<span class="fu">get</span>(index);
+    }
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> DictionaryTest {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        Dictionary&lt;String,Double&gt; d = <span class="kw">new</span> Dictionary&lt;String,Double&gt;();
+        d.<span class="fu">add</span>(<span class="st">&quot;apple&quot;</span>,<span class="fl">3.0</span>);
+        d.<span class="fu">add</span>(<span class="st">&quot;banana&quot;</span>,<span class="fl">2.5</span>);
+        System.<span class="fu">out</span>.<span class="fu">println</span>(d.<span class="fu">getDefinition</span>(<span class="st">&quot;banana&quot;</span>));
+
+        <span class="co">// Can also make the reverse!</span>
+        Dictionary&lt;Double,String&gt; d2 = <span class="kw">new</span> Dictionary&lt;Double,String&gt;();
+        d2.<span class="fu">add</span>(<span class="fl">3.0</span>,<span class="st">&quot;apple&quot;</span>);
+        d2.<span class="fu">add</span>(<span class="fl">2.5</span>,<span class="st">&quot;banana&quot;</span>);
+        System.<span class="fu">out</span>.<span class="fu">println</span>(d2.<span class="fu">getDefinition</span>(<span class="fl">3.0</span>));
+
+    }
+}</code></pre></div>
 <hr />
 <h1 id="testing">Testing</h1>
 <h2 id="debugging">Debugging</h2>
@@ -800,13 +858,16 @@ OK (1 test)</code></pre>
 <li>We now add a doubling function</li>
 <li>and write a new test case (<code>PointlessTest2.java</code>)</li>
 <li>What happens?</li>
-<li>Note: the compile commands start getting a bit tricky - we'll see how to make this easier later in the course through the use of the <code>ANT</code> build system.</li>
+<li>Note: the compile commands start getting a bit tricky - this can be overcome by using a build system (not covered in this course)</li>
 </ul>
 <hr />
 <h2 id="assertions">Assertions</h2>
 <ul>
 <li><code>JUnit</code> testing is done at compile time</li>
-<li>We might also want runtime checks</li>
+<li>We might also want runtime checks
+<ul>
+<li>to catch runtime errors (e.g. based on input that is unknown at compile time)</li>
+</ul></li>
 <li>The naive way is through the use of <code>if</code> statements</li>
 </ul>
 <hr />
@@ -834,7 +895,7 @@ OK (1 test)</code></pre>
 <li>Cause the program to exit if the condition is not met</li>
 <li>Can be switched on or off at runtime
 <ul>
-<li>e.g. runtime or debugging</li>
+<li>e.g. switch between runtime and debugging</li>
 </ul></li>
 </ul></li>
 </ul>

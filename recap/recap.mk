@@ -50,7 +50,7 @@
 - Some languages require programs to be *compiled* into Machine Code
 	- e.g. C++
 - Some languages are interpreted line by line as they are run
-	- e.g. Matlab, Python
+	- e.g. Matlab
 - Java is a bit different
 	- It is compiled into Bytecode
 	- Bytecode is run on the Java Virtual Machine
@@ -83,7 +83,7 @@
 - What are objects?
 - Why program with objects?
 - Why not program with objects?
-- [Useful link](http://duramecho.com/ComputerInformation/WhatIsObjectOrientedProgramming.html)
+- [Homework: read this](http://duramecho.com/ComputerInformation/WhatIsObjectOrientedProgramming.html)
 
 ----
 
@@ -112,7 +112,7 @@
 - Standard classes can be *instantiated*
 	- i.e. we can create objects of their type (e.g. `Pet`, `Dog`, etc)
 - Java allows you to define classes that cannot be instantiated: **Abstract classes**
-- Abstract classes cannot be - they can only be sub-classed
+- Abstract classes can only be sub-classed
 	- e.g. `AbstractPet`, `Cat` and `AbstractPetTest`
 - There is no situation where you would *have* to use an abstract class but many where it's neater
 - Note that sub-classes have to implement all abstract methods or be abstract themselves
@@ -186,6 +186,7 @@ endnotesonly
 
 ----
 
+
 # Memory in Java
 
 - Most data in Java is stored in Objects
@@ -193,6 +194,7 @@ endnotesonly
 	- There is one heap for the whole program
 - Each thread has its own stack
 	- All programs have at least one thread
+	- In your programmes so far, there is one thread
 
 
 ----
@@ -503,11 +505,12 @@ endnotesonly
 ## Final
 
 - It is good practice to make as many things `final` as possible
+- Make as many attributes `final` as possible
 - Stops other people doing bad things to your code
 	- `final` classes can not be sub-classed
 	- `final` methods can not be overloaded
 	- `final` variables cannot be modified once declared
-- `final` does not necessarily mean `immutable`
+- `final` is not the same as `immutable`
 - `FinalTest` and `FinalTestFixed`
 
 notesonly
@@ -566,7 +569,7 @@ endnotesonly
 ArrayList<Integer> a = new ArrayList();
 a.add(3);
 a.add(5);
-System.out.println(a.contains(4)); // Checks is 4 is in there
+System.out.println(a.contains(4)); // Checks is 4 is in a
 ~~~~
 
 notesonly
@@ -590,7 +593,7 @@ endnotesonly
 	h.remove("simon"); // removes this one
 ~~~~
 
-- Very fast for checking if an item is in there
+- Very fast for checking if an item is in the set
 
 ----
 
@@ -607,6 +610,73 @@ endnotesonly
 ~~~~
 
 - Very fast for obtaining items for a particular key
+
+----
+
+# Generics
+
+## ArrayList
+
+- What is the `<Double>` for in `ArrayList`?
+- It is a `generic`
+- i.e. `ArrayList` can work with any type (specified when you create it)
+- You can make classes with generics too...
+
+----
+
+## Creating generic objects
+
+~~~~{.java}
+public class MyClass<T> {
+	private T t;
+	public MyClass(T t) {
+		this.t = t;
+	}
+}
+~~~~
+
+- In the code above `T` can be any class
+- Can also have multiple types in the definition (`<A,B,C,D>`)
+- See `Dictionary.java`
+
+notesonly
+
+~~~~{.java}
+import java.util.ArrayList;
+// A hacky alternative to HashMaps to demonstrate
+// making a class with generics
+public class Dictionary<A,B> {
+	private ArrayList<A> listA = new ArrayList<A>();
+	private ArrayList<B> listB = new ArrayList<B>();
+	public void add(A a,B b) {
+		listA.add(a);
+		listB.add(b);
+	}
+	public B getDefinition(A a) {
+		int index = listA.indexOf(a);
+		return listB.get(index);
+	}
+}
+~~~~
+
+
+~~~~{.java}
+public class DictionaryTest {
+	public static void main(String[] args) {
+		Dictionary<String,Double> d = new Dictionary<String,Double>();
+		d.add("apple",3.0);
+		d.add("banana",2.5);
+		System.out.println(d.getDefinition("banana"));
+
+		// Can also make the reverse!
+		Dictionary<Double,String> d2 = new Dictionary<Double,String>();
+		d2.add(3.0,"apple");
+		d2.add(2.5,"banana");
+		System.out.println(d2.getDefinition(3.0));
+
+	}
+}
+~~~~
 
 ----
 
@@ -714,7 +784,7 @@ OK (1 test)
 - We now add a doubling function
 - and write a new test case (`PointlessTest2.java`)
 - What happens?
-- Note: the compile commands start getting a bit tricky - we'll see how to make this easier later in the course through the use of the `ANT` build system.
+- Note: the compile commands start getting a bit tricky - this can be overcome by using a build system (not covered in this course)
 
 ----
 
@@ -722,6 +792,7 @@ OK (1 test)
 
 - `JUnit` testing is done at compile time
 - We might also want runtime checks
+	- to catch runtime errors (e.g. based on input that is unknown at compile time)
 - The naive way is through the use of `if` statements
 
 ----
@@ -751,7 +822,7 @@ public class AssertionExample {
 - Assertions are a neater way to achieve this
 	- Cause the program to exit if the condition is not met
 	- Can be switched on or off at runtime
-		- e.g. runtime or debugging
+		- e.g. switch between runtime and debugging
 
 ~~~~{.java}
 public class AssertionExample2 {
