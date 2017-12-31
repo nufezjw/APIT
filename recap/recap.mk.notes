@@ -134,9 +134,7 @@
 
 ## Exercise: measurement with units
 
->You are working in a team building a system to work with GPS data (from e.g. a running watch). Your task is to create the part of the code to deal with distance values, that can be stored in a number of different units (metres, kilometers, miles, etc). Objects with different units have to be able to be compared (for e.g. sorting).
-
-- Can you think of a way of doing this with a single class (e.g. `UnitDistance` that stores the distance as a double and an object representing the unit). You'll need an interface somewhere...
+>You are  
 
 
 ----
@@ -394,7 +392,6 @@ a+=" simon";
 - Objects are stored in the heap, references to objects are stored in the stack
 
 
-notesonly
 
 ~~~~ {.java}
 public class CallExamples {
@@ -470,7 +467,6 @@ In the final example, we do see the value change reflected in `main`. This is be
 
 If you're struggling with this, keep in mind what a reference to an object is. Perhaps the best way to think of it is as the address of the bit of memory in which the object is stored. E.g. if you think of memory as a set of pigeon holes, then the reference stores which pigeon hole it is in. When we pass an object reference to a method, it creates its own local copy of the reference and therefore knows where the object is stored, and can  change it (assuming it permits changes). When a new object is created, it is put in a new pigeon hole and the local reference is changed (but not the original). So, in the first example above, the object referenced by `m` is left unchanged when `aTest()` creates a new object. The same thing is happening in examples 2 and 3, even though there is no `new` statement - because String and Double are immutable, new objects are made when we try and change them (see Figures below). In the final example, the reference never changes so the method can make changes to the original object.
 
-endnotesonly
 
 ----
 
@@ -506,7 +502,6 @@ endnotesonly
 - Returning mutable objects is bad practice
 - `MutableNastinessFixed` fixes it by returning a new object
 
-notesonly
 
 ~~~~{.java}
 public class MutableNastiness {
@@ -558,7 +553,6 @@ public MyDouble getMyDouble() {
 }
 ~~~~
 
-endnotesonly
 
 
 ----
@@ -573,7 +567,6 @@ endnotesonly
 - `final` does not necessarily mean `immutable`
 - `FinalTest` and `FinalTestFixed`
 
-notesonly
 
 ~~~~{.java}
 public class FinalTest {
@@ -614,7 +607,6 @@ private final Integer age;
 
 With this modification, the code will not even compile.
 
-endnotesonly
 
 ----
 

@@ -1,0 +1,1023 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Dr. Simon Rogers" />
+  <title>APIT - Java recap etc</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="pandoc.css" type="text/css" />
+</head>
+<body>
+<div id="header">
+<h1 class="title">APIT - Java recap etc</h1>
+<h2 class="author">Dr. Simon Rogers</h2>
+<h3 class="date">14/11/2014</h3>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#programming">Programming</a><ul>
+<li><a href="#your-experience">Your experience</a></li>
+<li><a href="#high-v-low--level-languages">High v low -level languages</a></li>
+<li><a href="#compiled-v-interpreted-v-java">Compiled v Interpreted v Java</a></li>
+<li><a href="#compiling-and-running-java-from-the-command-line">Compiling and running Java from the command line</a></li>
+<li><a href="#organising-projects">Organising projects</a></li>
+</ul></li>
+<li><a href="#object-orientation">Object Orientation</a><ul>
+<li><a href="#classes">Classes</a></li>
+<li><a href="#inheritance">Inheritance</a></li>
+<li><a href="#abstract-classes">Abstract Classes</a></li>
+<li><a href="#interfaces">Interfaces</a></li>
+<li><a href="#exercise-measurement-with-units"> Exercise: measurement with units</a></li>
+<li><a href="#public-private-and-protected"><code>public</code>, <code>private</code> and <code>protected</code></a></li>
+<li><a href="#static"><code>static</code></a></li>
+<li><a href="#static-attributes"><code>static</code> attributes</a></li>
+</ul></li>
+<li><a href="#memory-in-java">Memory in Java</a><ul>
+<li><a href="#the-stack">The Stack</a></li>
+<li><a href="#evaluating-expressions">Evaluating expressions</a></li>
+<li><a href="#aside-reverse-polish-notation">Aside: Reverse Polish Notation</a></li>
+<li><a href="#stacks-and-methods">Stacks and methods</a></li>
+<li><a href="#the-heap">The Heap</a></li>
+<li><a href="#garbage-collection">Garbage collection</a></li>
+</ul></li>
+<li><a href="#immutable-objects">Immutable objects</a></li>
+<li><a href="#call-by-value-and-call-by-reference">Call by value and call by reference</a><ul>
+<li><a href="#mutable-objects">Mutable objects</a></li>
+<li><a href="#final">Final</a></li>
+</ul></li>
+<li><a href="#testing">Testing</a><ul>
+<li><a href="#debugging">Debugging</a></li>
+<li><a href="#unit-testing">Unit testing</a></li>
+<li><a href="#junit"> JUnit</a></li>
+<li><a href="#pointless.java"><code>Pointless.java</code></a></li>
+<li><a href="#pointlesstest.java"><code>PointlessTest.java</code></a></li>
+<li><a href="#compiling">Compiling</a></li>
+<li><a href="#running">Running</a></li>
+<li><a href="#pointless2.java"><code>Pointless2.java</code></a></li>
+<li><a href="#assertions">Assertions</a></li>
+</ul></li>
+<li><a href="#javadoc">JavaDoc</a></li>
+<li><a href="#tools">Tools</a><ul>
+<li><a href="#version-control">Version control</a></li>
+<li><a href="#a-short-introduction-to-git">A short introduction to Git</a></li>
+<li><a href="#branching">Branching</a></li>
+<li><a href="#creating-a-repository"> Creating a repository</a></li>
+<li><a href="#collaborating-with-git"> Collaborating with Git</a></li>
+<li><a href="#build-systems">Build systems</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="overview">Overview</h1>
+<ul>
+<li>Programming</li>
+<li>Objects, interfaces etc</li>
+<li>Immutable objects</li>
+<li>Call by reference / value</li>
+<li>Final</li>
+<li>Testing</li>
+<li>Documenting</li>
+<li>Tools</li>
+</ul>
+<hr />
+<h1 id="programming">Programming</h1>
+<h2 id="your-experience">Your experience</h2>
+<ul>
+<li>How many people had their first experience of programming in S1?</li>
+<li>What other languages have you used?</li>
+<li>What programming tools have you used?</li>
+<li>How many of you know what the following things are:
+<ul>
+<li>Objects?</li>
+<li>Functions?</li>
+<li>Stacks? Queues? Linked lists? Arrays?</li>
+<li>Regular Expressions?</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="high-v-low--level-languages">High v low -level languages</h2>
+<ul>
+<li>Computers follow instructions in <em>machine code</em>
+<ul>
+<li>binary...quite hard for humans to read</li>
+<li>not <em>that</em> long ago, humans had to program computers like this (some academics in SoCS will remember...)</li>
+<li>Machine code is <em>low level</em></li>
+</ul></li>
+<li>At the other extreme, <em>high level</em> languages are eas(y,ier) for humans to read
+<ul>
+<li>Java is a fairly <em>high level</em> language</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="compiled-v-interpreted-v-java">Compiled v Interpreted v Java</h2>
+<ul>
+<li>Computers run programs in Machine Code
+<ul>
+<li>Low level language. Not human readable</li>
+</ul></li>
+<li>Some languages require programs to be <em>compiled</em> into Machine Code
+<ul>
+<li>e.g. C++</li>
+</ul></li>
+<li>Some languages are interpreted line by line as they are run
+<ul>
+<li>e.g. Matlab, Python</li>
+</ul></li>
+<li>Java is a bit different
+<ul>
+<li>It is compiled into Bytecode</li>
+<li>Bytecode is run on the Java Virtual Machine</li>
+<li>What is a virtual machine?</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="compiling-and-running-java-from-the-command-line">Compiling and running Java from the command line</h2>
+<ul>
+<li>I will do this in class</li>
+<li>In simplest case, it involves two steps:
+<ul>
+<li>Compiling: <code>javac MyClass.java</code></li>
+<li>Running: <code>java MyClass</code></li>
+</ul></li>
+<li>We will see some more complex examples throughout the course</li>
+</ul>
+<hr />
+<h2 id="organising-projects">Organising projects</h2>
+<ul>
+<li>All the programs in this course involve small numbers of classes</li>
+<li>For larger projects, it is important to organise all your files in a standard manner
+<ul>
+<li>Eclipse does this automatically</li>
+</ul></li>
+<li>If you want to do it manually, good description is available <a href="http://cs.lmu.edu/~ray/notes/largejavaapps/">here</a></li>
+</ul>
+<hr />
+<h1 id="object-orientation">Object Orientation</h1>
+<ul>
+<li>Java is an <em>Object Oriented</em> language</li>
+<li>What are objects?</li>
+<li>Why program with objects?</li>
+<li>Why not program with objects?</li>
+<li><a href="http://duramecho.com/ComputerInformation/WhatIsObjectOrientedProgramming.html">Useful link</a></li>
+</ul>
+<hr />
+<h2 id="classes">Classes</h2>
+<ul>
+<li>Classes define objects</li>
+<li><code>Pet</code> is a simple class used by <code>PetTest</code></li>
+<li>Classes allow us to neatly combine related attributes and methods</li>
+</ul>
+<hr />
+<h2 id="inheritance">Inheritance</h2>
+<ul>
+<li>One of the big strengths of OOP is <em>inheritance</em>
+<ul>
+<li>Creating classes that <em>inherit</em> everything of another class and add more</li>
+<li>e.g. <code>Dog</code>, <code>Goldfish</code>, <code>PetInheritanceTest</code></li>
+</ul></li>
+<li>In this example we also see <code>overridden</code> methods
+<ul>
+<li><code>Dog</code> and <code>Goldfish</code> override the <code>description</code> method</li>
+<li>The loop does not care which subclass the objects belong to.</li>
+<li>This is very useful in many applications - <em>polymorphism</em></li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="abstract-classes">Abstract Classes</h2>
+<ul>
+<li>Standard classes can be <em>instantiated</em>
+<ul>
+<li>i.e. we can create objects of their type (e.g. <code>Pet</code>, <code>Dog</code>, etc)</li>
+</ul></li>
+<li>Java allows you to define classes that cannot be instantiated: <strong>Abstract classes</strong></li>
+<li>Abstract classes cannot be - they can only be sub-classed
+<ul>
+<li>e.g. <code>AbstractPet</code>, <code>Cat</code> and <code>AbstractPetTest</code></li>
+</ul></li>
+<li>There is no situation where you would <em>have</em> to use an abstract class but many where it's neater</li>
+<li>Note that sub-classes have to implement all abstract methods or be abstract themselves</li>
+</ul>
+<hr />
+<h2 id="interfaces">Interfaces</h2>
+<ul>
+<li>Interfaces are similar to abstract classes but:
+<ul>
+<li>Cannot have fields (unless they are <code>static</code> and <code>final</code>)</li>
+</ul></li>
+<li>See <code>InterfacePet</code>, <code>Parrot</code> and <code>TestInterfacePet</code></li>
+<li>Interfaces are like contracts: they just specify the methods a class must implement
+<ul>
+<li>Note that methods in interfaces are abstract by default</li>
+</ul></li>
+<li>Note:
+<ul>
+<li>Classes can only sub-class one class...</li>
+<li>...but can implement many interfaces</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="exercise-measurement-with-units"> Exercise: measurement with units</h2>
+<blockquote>
+<p>You are</p>
+</blockquote>
+<hr />
+<h2 id="public-private-and-protected"><code>public</code>, <code>private</code> and <code>protected</code></h2>
+<ul>
+<li>Fields/attributes and methods are either public, private, or protected
+<ul>
+<li>Public: anything can access</li>
+<li>Private: only objects of this type can access
+<ul>
+<li>e.g. <code>provideBone</code> method in <code>Dog</code></li>
+</ul></li>
+<li>Protected: only objects of this type, sub-classes (and other things within the same package)
+<ul>
+<li>e.g. <code>name</code> and <code>age</code> in <code>Pet</code> and <code>AbstractPet</code></li>
+</ul></li>
+</ul></li>
+<li>In general, be as restrictive as possible.</li>
+</ul>
+<hr />
+<h2 id="static"><code>static</code></h2>
+<ul>
+<li>Fields and methods can also be declared <code>static</code></li>
+<li>This means that they are accessible without an object being instantiated</li>
+<li>Useful for storing generic methods and constants</li>
+<li>e.g. <code>MyMath</code> and <code>MyMathTest</code>
+<ul>
+<li><code>areaOfCircle</code> is used without creating a <code>MyMath</code> object</li>
+<li>Another static thing is used here - what is it?</li>
+</ul></li>
+</ul>
+<hr />
+<hr />
+<h2 id="static-attributes"><code>static</code> attributes</h2>
+<ul>
+<li>Static attributes within an object are <em>shared</em> by all instances</li>
+<li>Change the value in one, and it will change in all of the others...
+<ul>
+<li>Useful, but not always the neatest solution</li>
+</ul></li>
+</ul>
+<hr />
+<h1 id="memory-in-java">Memory in Java</h1>
+<ul>
+<li>Most data in Java is stored in Objects</li>
+<li>Objects are stored in an area of memory called the <em>heap</em>
+<ul>
+<li>There is one heap for the whole program</li>
+</ul></li>
+<li>Each thread has its own stack
+<ul>
+<li>All programs have at least one thread</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="the-stack">The Stack</h2>
+<ul>
+<li>The stack is used for three purposes:
+<ul>
+<li>Evaluating expressions</li>
+<li>Storage of local variables (variables in the current <em>scope</em>)</li>
+<li>Management of method calls</li>
+</ul></li>
+<li>Think of it as a stack of paper.
+<ul>
+<li>Pieces of paper are put on (pushed), and taken off (popped), the top of the pile</li>
+<li>LIFO: Last In First Out</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="evaluating-expressions">Evaluating expressions</h2>
+<ul>
+<li>Consider the expression <span class="math inline">2 + 3 * 4</span> (i.e. <span class="math inline">2 + (3 * 4)</span>)</li>
+<li>It can be represented by a <em>syntax tree</em></li>
+</ul>
+<div class="figure">
+<img src="Figures/stack1.jpg" />
+
+</div>
+<ul>
+<li>Traversing depth-first, left to right we get: <code>2 3 4 x +</code></li>
+<li>This can be evaluated via the stack...</li>
+</ul>
+<hr />
+<div class="figure">
+<img src="Figures/stack2.jpg" alt="2 is added to the stack" />
+<p class="caption">2 is added to the stack</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stack3.jpg" alt="3 is added to the stack" />
+<p class="caption">3 is added to the stack</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stack4.jpg" alt="4 is added to the stack" />
+<p class="caption">4 is added to the stack</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stack5.jpg" alt="x operator pops out top element, multiplies it by new top element" />
+<p class="caption"><code>x</code> operator pops out top element, multiplies it by new top element</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stack6.jpg" alt="x operator pops out top element, adds it to new top element" />
+<p class="caption"><code>x</code> operator pops out top element, adds it to new top element</p>
+</div>
+<hr />
+<h2 id="aside-reverse-polish-notation">Aside: Reverse Polish Notation</h2>
+<ul>
+<li>This calculation was performed in Reverse Polish Notation</li>
+<li>Operators appear immediately after operands e.g.
+<ul>
+<li><code>32-5+</code> = <code>(3-2) + 5</code></li>
+<li><code>45*2-</code> = <code>(4x5) - 2</code></li>
+<li><code>234++</code> = <code>(2+3) + 4</code></li>
+<li><code>512+4x+3-</code> = ?</li>
+</ul></li>
+<li>See <a href="http://en.wikipedia.org/wiki/Reverse_Polish_notation">this</a></li>
+</ul>
+<hr />
+<h2 id="stacks-and-methods">Stacks and methods</h2>
+<ul>
+<li>When a method is called, a <em>stack frame</em> is created
+<ul>
+<li>An area at the top of the stack with space for the method to store local variables</li>
+</ul></li>
+</ul>
+<div class="figure">
+<img src="Figures/stackframe1.jpg" />
+
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stackframe2.jpg" />
+
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stackframe3.jpg" />
+
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stackframe4.jpg" />
+
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stackframe5.jpg" />
+
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stackframe6.jpg" />
+
+</div>
+<hr />
+<h2 id="the-heap">The Heap</h2>
+<ul>
+<li>The heap is an area of memory used to store objects in Java</li>
+<li>Objects in the heap are accessible from any part of the program that has a local reference to the object</li>
+<li>Threads share a single heap
+<ul>
+<li>i.e. each thread can access objects in the heap</li>
+<li>Useful, but causes all of the multi-threading problems we wil see</li>
+</ul></li>
+<li>In Java, objects are stored in the heap, references to objects are stored in the stack
+<ul>
+<li>This is very important, and we'll come back to it later...</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="garbage-collection">Garbage collection</h2>
+<ul>
+<li>Java periodically deletes objects when they are not needed</li>
+<li>An object is not needed if it is <em>unreachable</em>
+<ul>
+<li>i.e. no references to it exist</li>
+</ul></li>
+</ul>
+<hr />
+<div class="figure">
+<img src="Figures/garbage1.jpg" alt="Example program" />
+<p class="caption">Example program</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/garbage2.jpg" alt="Object (B) and reference (b) created" />
+<p class="caption">Object (B) and reference (b) created</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/garbage3.jpg" alt="object (A) and reference (a) created. Note that A includes a reference to B)" />
+<p class="caption">object (A) and reference (a) created. Note that A includes a reference to B)</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/garbage4.jpg" alt="Two more B objects and references created" />
+<p class="caption">Two more B objects and references created</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/garbage5.jpg" alt="Reference b deleted" />
+<p class="caption">Reference b deleted</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/garbage6.jpg" alt="Reference b2 deleted" />
+<p class="caption">Reference b2 deleted</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/garbage7.jpg" alt="Objects with no reference are garbage. Note that the first B is still referenced from A so isn&#39;t garbage even though its original reference has been deleted" />
+<p class="caption">Objects with no reference are garbage. Note that the first B is still referenced from A so isn't garbage even though its original reference has been deleted</p>
+</div>
+<hr />
+<h1 id="immutable-objects">Immutable objects</h1>
+<ul>
+<li>Some native Java objects are <em>immutable</em></li>
+<li>Once they are created they cannot be changed
+<ul>
+<li>e.g. String, Double, Float, Integer, etc</li>
+</ul></li>
+<li>It looks like we can change them?</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">String a = <span class="st">&quot;hello&quot;</span>;
+a+=<span class="st">&quot; simon&quot;</span>;</code></pre></div>
+<ul>
+<li>But, Java is creating a new object and storing the reference in <code>a</code>
+<ul>
+<li>Objects in heap, references in stack...</li>
+</ul></li>
+<li>See <code>StringExample</code></li>
+</ul>
+<hr />
+<h1 id="call-by-value-and-call-by-reference">Call by value and call by reference</h1>
+<ul>
+<li>Call by value
+<ul>
+<li>Value of a variable is passed to a method</li>
+<li>Changes to the local copy are not reflected in the calling space</li>
+</ul></li>
+<li>Call by reference (e.g. C++)
+<ul>
+<li>Object references are passed to method</li>
+<li>Actual object can be modified</li>
+</ul></li>
+</ul>
+<hr />
+<div class="figure">
+<img src="Figures/passing.jpg" />
+
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/passing2.jpg" />
+
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/passing3.jpg" />
+
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/passing4.jpg" />
+
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/objectPassing.jpg" />
+
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/objectPassing2.jpg" />
+
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/objectPassing3.jpg" />
+
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/objectPassing4.jpg" />
+
+</div>
+<hr />
+<ul>
+<li>In Java, numbers and object references are call by value. Note that there is a difference between:
+<ul>
+<li>Objects are passed by reference</li>
+<li>Object references are passed by value</li>
+</ul></li>
+<li>Objects passed to a method can be modified, but creating new ones will not be reflected in the calling scope (the reference cannot change)
+<ul>
+<li><code>CallExamples</code></li>
+</ul></li>
+<li>Objects are stored in the heap, references to objects are stored in the stack</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> CallExamples {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> MyClass {
+        <span class="dt">int</span> a = <span class="dv">0</span>;
+        <span class="kw">public</span> <span class="fu">MyClass</span>(<span class="dt">int</span> a) {
+            <span class="kw">this</span>.<span class="fu">a</span> = a;
+        }
+        <span class="kw">public</span> <span class="dt">int</span> <span class="fu">getValue</span>() {
+            <span class="kw">return</span> a;
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> DoubleClass {
+        Double a = <span class="fl">0.0</span>;
+        <span class="kw">public</span> <span class="fu">DoubleClass</span>(Double a) {
+            <span class="kw">this</span>.<span class="fu">a</span> = a;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">multiply</span>(Double m) {
+            a = a * m;
+        }
+        <span class="kw">public</span> Double <span class="fu">getValue</span>() {
+            <span class="kw">return</span> a;
+        }
+    }
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">aTest</span>(MyClass in) {
+        in = <span class="kw">new</span> <span class="fu">MyClass</span>(<span class="dv">5</span>);
+    }
+
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">stringTest</span>(String in) {
+        in = in + <span class="st">&quot; added&quot;</span>;
+        System.<span class="fu">out</span>.<span class="fu">println</span>(in);
+    }
+
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">doubleTest</span>(Double in) {
+        in = in * <span class="dv">2</span>;
+    }
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">doubleObjectTest</span>(DoubleClass in) {
+        in.<span class="fu">multiply</span>(<span class="fl">2.0</span>);
+    }
+
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        MyClass m = <span class="kw">new</span> <span class="fu">MyClass</span>(<span class="dv">3</span>);
+        <span class="fu">aTest</span>(m);
+        System.<span class="fu">out</span>.<span class="fu">println</span>(m.<span class="fu">getValue</span>());
+        <span class="co">// What value will be displayed?</span>
+
+
+        String s = <span class="st">&quot;hello&quot;</span>;
+        <span class="fu">stringTest</span>(s);
+        System.<span class="fu">out</span>.<span class="fu">println</span>(s);
+        <span class="co">// What will s be?</span>
+
+        Double d = <span class="fl">3.2</span>;
+        <span class="fu">doubleTest</span>(d);
+        System.<span class="fu">out</span>.<span class="fu">println</span>(d);
+        <span class="co">// What will d be?</span>
+
+        DoubleClass d2 = <span class="kw">new</span> <span class="fu">DoubleClass</span>(<span class="fl">3.2</span>);
+        <span class="fu">doubleObjectTest</span>(d2);
+        System.<span class="fu">out</span>.<span class="fu">println</span>(d2.<span class="fu">getValue</span>());
+        <span class="co">// What will the value be?</span>
+    }
+}</code></pre></div>
+<p>In the first example, <code>main</code> creates an object of type <code>MyClass</code> (with value 3). The <code>aTest()</code> method is passed the value of the reference to the object (this sentence is important - make sure you understand it!). Inside the <code>aTest()</code> method it creates a new object and stores the reference in <code>in</code>. So, why don't we see the new object in <code>main</code>? It is because Java uses call by value for references and therefore changes to the value are not reflected in the calling scope. When <code>new</code> is invoked, the value of <code>in</code> changes, but this is the local <code>in</code>.</p>
+<p>In the second example, we pass the string <code>&quot;Hello&quot;</code> to <code>stringTest</code>. <code>stringTest</code> appends <code>added</code> to the String. Why isn't this change seen in <code>main</code>? This time it is because String is an immutable type. When it looks like we're changing a String we're actually making a new object. The value of new object reference is stored in the local <code>in</code> variable and so isn't seen in <code>main</code>.</p>
+<p>In the third example, we see the same behaviour, but this time with the immutable Double object instead of a String.</p>
+<p>In the final example, we do see the value change reflected in <code>main</code>. This is because our <code>DoubleClass</code> is mutable. When we pass a <code>DoubleClass</code> object around, it's attributes can be changed as long as we never change the value of the reference (by, say, making a new object).</p>
+<p>If you're struggling with this, keep in mind what a reference to an object is. Perhaps the best way to think of it is as the address of the bit of memory in which the object is stored. E.g. if you think of memory as a set of pigeon holes, then the reference stores which pigeon hole it is in. When we pass an object reference to a method, it creates its own local copy of the reference and therefore knows where the object is stored, and can change it (assuming it permits changes). When a new object is created, it is put in a new pigeon hole and the local reference is changed (but not the original). So, in the first example above, the object referenced by <code>m</code> is left unchanged when <code>aTest()</code> creates a new object. The same thing is happening in examples 2 and 3, even though there is no <code>new</code> statement - because String and Double are immutable, new objects are made when we try and change them (see Figures below). In the final example, the reference never changes so the method can make changes to the original object.</p>
+<hr />
+<div class="figure">
+<img src="Figures/stringthing1.jpg" alt="Example program" />
+<p class="caption">Example program</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stringthing2.jpg" alt="Main makes a String object and a reference (s)" />
+<p class="caption">Main makes a String object and a reference (s)</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stringthing3.jpg" alt="stringTest makes its own reference to the String object (in)" />
+<p class="caption">stringTest makes its own reference to the String object (in)</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stringthing4.jpg" alt="String is an immutable type so when we change it, a new String is made" />
+<p class="caption">String is an immutable type so when we change it, a new String is made</p>
+</div>
+<hr />
+<div class="figure">
+<img src="Figures/stringthing5.jpg" alt="Back in main, s is still a reference to the original object. What happens to the &quot;hello added&quot; string when we return to main?" />
+<p class="caption">Back in main, s is still a reference to the original object. What happens to the &quot;hello added&quot; string when we return to main?</p>
+</div>
+<hr />
+<h2 id="mutable-objects">Mutable objects</h2>
+<ul>
+<li>In <code>StringExample</code> the main method created a new String object <code>s+=&quot; simon&quot;</code></li>
+<li>The original one remained unchanged
+<ul>
+<li>This is because <code>String</code> is <em>immutable</em></li>
+</ul></li>
+<li>What about a mutable object?</li>
+<li><code>MutableNastiness</code></li>
+<li>Returning mutable objects is bad practice</li>
+<li><code>MutableNastinessFixed</code> fixes it by returning a new object</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> MutableNastiness {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> MyDouble {
+        <span class="kw">private</span> Double a;
+        <span class="kw">public</span> <span class="fu">MyDouble</span>(Double a) {
+            <span class="kw">this</span>.<span class="fu">a</span> = a;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">multiply</span>(Double m) {
+            a = a * m;
+        }
+        <span class="kw">public</span> Double <span class="fu">getValue</span>() {
+            <span class="kw">return</span> a;
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> DoubleWrapper {
+        <span class="kw">private</span> MyDouble d;
+        <span class="kw">public</span> <span class="fu">DoubleWrapper</span>(Double in) {
+            <span class="kw">this</span>.<span class="fu">d</span> = <span class="kw">new</span> <span class="fu">MyDouble</span>(in);
+        }
+        <span class="kw">public</span> MyDouble <span class="fu">getMyDouble</span>() {
+            <span class="kw">return</span> d;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">multiply</span>(Double m) {
+            d.<span class="fu">multiply</span>(m);
+        }
+        <span class="kw">public</span> Double <span class="fu">getValue</span>() {
+            <span class="kw">return</span> d.<span class="fu">getValue</span>();
+        }
+    }
+
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        <span class="co">// Create a Double object</span>
+        DoubleWrapper dw = <span class="kw">new</span> <span class="fu">DoubleWrapper</span>(<span class="fl">3.2</span>);
+        MyDouble d = dw.<span class="fu">getMyDouble</span>();
+        System.<span class="fu">out</span>.<span class="fu">println</span>(d.<span class="fu">getValue</span>());
+        d.<span class="fu">multiply</span>(<span class="fl">2.0</span>);
+        System.<span class="fu">out</span>.<span class="fu">println</span>(d.<span class="fu">getValue</span>());
+        System.<span class="fu">out</span>.<span class="fu">println</span>(dw.<span class="fu">getValue</span>());
+    }
+}</code></pre></div>
+<p>In this example, <code>DoubleWrapper</code> is used to hold a <code>MyDouble</code> object. When we call <code>getMyDouble()</code> it returns the reference to its own <code>MyDouble</code> object. So, when we subsequently change that object, we are changing the object within <code>DoubleWrapper</code>. This is not good practice as it can result in unpredictable behaviour - someone else changes an object you rely on. To avoid this, try to only ever return immutable objects or new objects. For example, in <code>MutableNastinessFixed</code> the <code>getMyDouble()</code> method is changed to create a new object. Now, changes to the object returned do not change the original:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> MyDouble <span class="fu">getMyDouble</span>() {
+    <span class="kw">return</span> <span class="kw">new</span> <span class="fu">MyDouble</span>(<span class="fu">getValue</span>());
+}</code></pre></div>
+<hr />
+<h2 id="final">Final</h2>
+<ul>
+<li>It is good practice to make as many things <code>final</code> as possible</li>
+<li>Stops other people doing bad things to your code
+<ul>
+<li><code>final</code> classes can not be sub-classed</li>
+<li><code>final</code> methods can not be overloaded</li>
+<li><code>final</code> variables cannot be modified once declared</li>
+</ul></li>
+<li><code>final</code> does not necessarily mean <code>immutable</code></li>
+<li><code>FinalTest</code> and <code>FinalTestFixed</code></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> FinalTest {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> <span class="kw">class</span> Person {
+        <span class="kw">private</span> String name;
+        <span class="kw">private</span> Integer age;
+        <span class="kw">public</span> <span class="fu">Person</span>(String name,Integer age) {
+            <span class="kw">this</span>.<span class="fu">name</span> = name;
+            <span class="kw">this</span>.<span class="fu">age</span> = age;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">setName</span>(String name) {
+            <span class="kw">this</span>.<span class="fu">name</span> = name;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">setAge</span>(Integer age) {
+            <span class="kw">this</span>.<span class="fu">age</span> = age;
+        }
+        <span class="kw">public</span> String <span class="fu">getName</span>() {
+            <span class="kw">return</span> name;
+        }
+        <span class="kw">public</span> Integer <span class="fu">getAge</span>() {
+            <span class="kw">return</span> age;
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        Person p = <span class="kw">new</span> <span class="fu">Person</span>(<span class="st">&quot;Ella&quot;</span>,<span class="dv">1</span>);
+        p.<span class="fu">setAge</span>(<span class="dv">2</span>);
+        System.<span class="fu">out</span>.<span class="fu">println</span>(p.<span class="fu">getName</span>() + <span class="st">&quot; is &quot;</span> + p.<span class="fu">getAge</span>());
+    }
+}</code></pre></div>
+<p>Here, <code>Person</code> is a final class. But this does not mean that its attributes are immutable. You can see this as <code>main</code> can invoke methods that change the values of the <code>name</code> and <code>age</code> attributes. Remember that a class being <code>final</code> just means that it cannot be sub-classed (inherited). To make immutable classes, all attributes must be immutable (and no mutable objects must be returned). In this case, we change the attribute declarations to:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">private</span> <span class="dt">final</span> String name;
+<span class="kw">private</span> <span class="dt">final</span> Integer age;</code></pre></div>
+<p>With this modification, the code will not even compile.</p>
+<hr />
+<h1 id="testing">Testing</h1>
+<h2 id="debugging">Debugging</h2>
+<ul>
+<li>In semester 1 you learnt to use the Eclipse debugger</li>
+<li>There is more to testing than debugging</li>
+<li>In real development projects, many people are wholly devoted to testing</li>
+<li>Black box, white box</li>
+<li>Unit testing...</li>
+</ul>
+<hr />
+<h2 id="unit-testing">Unit testing</h2>
+<ul>
+<li>Testing individual components (e.g. classes, methods) to see if they are fit for use</li>
+<li>Design a suite of tests that can be run every time objects are changed</li>
+<li>Separates testing from the classes themselves</li>
+</ul>
+<hr />
+<h2 id="junit"> JUnit</h2>
+<ul>
+<li><code>JUnit</code> is a popular Java unit test framework</li>
+<li>A <em>test class</em> is created for each normal class</li>
+<li>We can then run <code>JUnit</code> and it will automatically perform the tests</li>
+</ul>
+<hr />
+<h2 id="pointless.java"><code>Pointless.java</code></h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> Pointless {
+    <span class="kw">public</span> <span class="dt">int</span> myInt;
+    <span class="kw">public</span> <span class="fu">Pointless</span>(<span class="dt">int</span> n) {
+        myInt = n;
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">increment</span>() {
+        myInt++;
+    }
+    <span class="kw">public</span> <span class="dt">int</span> <span class="fu">getMyInt</span>() {
+        <span class="kw">return</span> myInt;
+    }
+}</code></pre></div>
+<hr />
+<h2 id="pointlesstest.java"><code>PointlessTest.java</code></h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import org.junit.Test;</span>
+<span class="kw">import org.junit.Assert;</span>
+<span class="kw">public</span> <span class="kw">class</span> PointlessTest {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="dt">double</span> EPSILON = <span class="fl">1e-12</span>; 
+    <span class="fu">@Test</span> <span class="kw">public</span> <span class="dt">void</span> <span class="fu">testIncrement</span>()
+    {
+        Pointless p = <span class="kw">new</span> <span class="fu">Pointless</span>(<span class="dv">1</span>);
+        p.<span class="fu">increment</span>();
+        <span class="dt">int</span> expected = <span class="dv">2</span>;
+        Assert.<span class="fu">assertEquals</span>(expected,p.<span class="fu">getMyInt</span>(),EPSILON);
+    }
+}</code></pre></div>
+<hr />
+<h2 id="compiling">Compiling</h2>
+<ul>
+<li>To compile <code>PointlessTest</code> we need <code>JUnit</code>
+<ul>
+<li>You can do this in eclipse</li>
+<li>Or from the command line</li>
+</ul></li>
+<li>On a mac:</li>
+</ul>
+<p><code>javac -cp .:../JUnit/junit-4.12.jar PointlessTest.java</code></p>
+<ul>
+<li><code>-cp</code> sets the <em>class path</em>
+<ul>
+<li>In this case, '.' means current directory and <code>./JUnit/junit-4.12.jar</code> is where the <code>JUnit</code> <code>.jar</code> file is</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="running">Running</h2>
+<ul>
+<li>Again, possible in Eclipse or from the command line</li>
+<li>From command line (mac):</li>
+</ul>
+<p><code>java -cp .:../JUnit/junit-4.12.jar:../JUnit/hamcrest-core-1.3.jar PointlessTest</code></p>
+<ul>
+<li>Result:</li>
+</ul>
+<pre><code>JUnit version 4.12
+.
+Time: 0.004
+
+OK (1 test)</code></pre>
+<hr />
+<h2 id="pointless2.java"><code>Pointless2.java</code></h2>
+<ul>
+<li>We now add a doubling function</li>
+<li>and write a new test case (<code>PointlessTest2.java</code>)</li>
+<li>What happens?</li>
+<li>Note: the compile commands start getting a bit tricky - we'll see how to make this easier later in the course through the use of the <code>ANT</code> build system.</li>
+</ul>
+<hr />
+<h2 id="assertions">Assertions</h2>
+<ul>
+<li><code>JUnit</code> testing is done at compile time</li>
+<li>We might also want runtime checks</li>
+<li>The naive way is through the use of <code>if</code> statements</li>
+</ul>
+<hr />
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> AssertionExample {
+    <span class="kw">private</span> <span class="dt">int</span> myInt;
+    <span class="kw">public</span> <span class="fu">AssertionExample</span>(<span class="dt">int</span> n) {
+        myInt = n;
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">decrement</span>(<span class="dt">int</span> d) {
+        <span class="kw">if</span>(d&gt;myInt) {
+            <span class="co">// Can&#39;t decrement!</span>
+            System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Can&#39;t decrement!!&quot;</span>);
+        }<span class="kw">else</span> {
+            myInt = myInt - d;
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        <span class="kw">new</span> <span class="fu">AssertionExample</span>(<span class="dv">5</span>).<span class="fu">decrement</span>(<span class="dv">10</span>);
+    }
+}</code></pre></div>
+<hr />
+<ul>
+<li>Assertions are a neater way to achieve this
+<ul>
+<li>Cause the program to exit if the condition is not met</li>
+<li>Can be switched on or off at runtime
+<ul>
+<li>e.g. runtime or debugging</li>
+</ul></li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> AssertionExample2 {
+    <span class="kw">private</span> <span class="dt">int</span> myInt;
+    <span class="kw">public</span> <span class="fu">AssertionExample2</span>(<span class="dt">int</span> n) {
+        myInt = n;
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">decrement</span>(<span class="dt">int</span> d) {
+        assert myInt &gt;= d;
+        myInt = myInt - d;
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        <span class="kw">new</span> <span class="fu">AssertionExample2</span>(<span class="dv">5</span>).<span class="fu">decrement</span>(<span class="dv">10</span>);
+    }
+}</code></pre></div>
+<hr />
+<ul>
+<li>Running:</li>
+</ul>
+<p><code>java -enableassertions AssertionExample2</code></p>
+<ul>
+<li>can also use <code>-ea</code></li>
+<li>Try running with and without</li>
+<li>An alternative is to explicitly throw exceptions but..
+<ul>
+<li>Takes longer to write</li>
+<li>Exceptions cannot be switched off at runtime (slows things down)</li>
+</ul></li>
+</ul>
+<hr />
+<h1 id="javadoc">JavaDoc</h1>
+<ul>
+<li>It's very important to properly document your code</li>
+<li>Standard comments <code>//</code> <code>/*</code> are good</li>
+<li>Javadoc is better!</li>
+<li>[This]{http://agile.csc.ncsu.edu/SEMaterials/tutorials/javadoc/} is quite a good tutorial</li>
+<li>See <code>MyMath</code> in <code>JavaDoc</code> directory</li>
+<li>Compile with <code>javadoc MyMath.java</code> and open <code>index.html</code></li>
+</ul>
+<hr />
+<h1 id="tools">Tools</h1>
+<h2 id="version-control">Version control</h2>
+<ul>
+<li>Keeping large projects organised and backed up, particularly if there are multiple authors</li>
+<li>Examples:
+<ul>
+<li>Git</li>
+<li>SVN</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="a-short-introduction-to-git">A short introduction to Git</h2>
+<ul>
+<li>Git
+<ul>
+<li>Version control system</li>
+</ul></li>
+<li>Github
+<ul>
+<li>A free server that hosts Git repositories</li>
+</ul></li>
+</ul>
+<hr />
+<ul>
+<li>Each git repository is a hierarchy of directories</li>
+<li>Git keeps track of how files change within the repository</li>
+<li>Git stores snapshots of the file system, <em>not</em> changes to files</li>
+<li>Each snapshot is called a <code>commit</code></li>
+<li>I <em>strongly</em> recommend you read the documentation at <a href="http://git-scm.com">git-scm.com</a></li>
+</ul>
+<hr />
+<div class="figure">
+<img src="http://git-scm.com/book/en/v2/book/01-introduction/images/areas.png" alt="The three components of Git (figure from git-scm.com)" />
+<p class="caption">The three components of Git (figure from git-scm.com)</p>
+</div>
+<hr />
+<div class="figure">
+<img src="http://git-scm.com/book/en/v2/book/01-introduction/images/snapshots.png" alt="The repository (from git-scm.com)" />
+<p class="caption">The repository (from git-scm.com)</p>
+</div>
+<hr />
+<ul>
+<li><em>tracked</em> files are files that are under Git's control</li>
+<li>You have to manually tell it which files to track
+<ul>
+<li>although it will automatically ignore file types listed in the <code>.gitignore</code> file in the project root.</li>
+</ul></li>
+<li>The Git process:
+<ul>
+<li>You make some changes (changing files, adding files, removing files)</li>
+<li>You <code>add</code> those changed files to the staging area</li>
+<li>You <code>commit</code> those changes to the local database</li>
+</ul></li>
+<li>If in doubt, use <code>git status</code> to see what's going on</li>
+<li>Example...</li>
+</ul>
+<hr />
+<h2 id="branching">Branching</h2>
+<ul>
+<li>Git's real power is in the branching functionality</li>
+<li>A branch is a points to a commit (a particular snapshot)</li>
+<li>The Head is a special pointer that points to the current branch</li>
+<li>Each repository has a <code>master</code> branch
+<ul>
+<li>Nothing special about it, it's just the default name for the first branch</li>
+</ul></li>
+<li>We can create and move between (<code>checkout</code>) other branches</li>
+<li><a href="http://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging" class="uri">http://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging</a></li>
+<li>Example</li>
+</ul>
+<hr />
+<h2 id="creating-a-repository"> Creating a repository</h2>
+<ul>
+<li>Two ways:
+<ul>
+<li>move into the desired root directory of the repository and type <code>git init</code> (<em>try this!</em>)</li>
+<li><code>Clone</code> a repository from a server (e.g. Github) (<em>try this too!</em>)</li>
+<li>Note that the repository on the server is just another local Git repository</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="collaborating-with-git"> Collaborating with Git</h2>
+<ul>
+<li>Several users clone the same repository</li>
+<li>Changes can be <code>pulled</code> down from the server (<code>git pull origin master</code>)
+<ul>
+<li>pulls the master branch from the server and merges it into the current local branch (handling conflicts)</li>
+</ul></li>
+<li>Local changes can be <code>pushed</code> up to the server (<code>git push origin master</code>)</li>
+<li>Example...</li>
+</ul>
+<hr />
+<h2 id="build-systems">Build systems</h2>
+<ul>
+<li>To compile complex projects that depend on code from different sources</li>
+<li>Examples:
+<ul>
+<li>Maven (the current standard for Java)</li>
+<li>ANT (older but still popular)</li>
+</ul></li>
+<li>See Tim Storer's ANT guide on Moodle</li>
+</ul>
+</body>
+</html>
