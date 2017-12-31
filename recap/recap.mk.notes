@@ -134,10 +134,22 @@
 
 ## Exercise: measurement with units
 
->You are  
+>You are working in a team building a system to work with GPS data (from e.g. a running watch). Your task is to create the part of the code to deal with distance values, that can be stored in a number of different units (metres, kilometers, miles, etc). Objects with different units have to be able to be compared (for e.g. sorting).
+
+- Can you think of a way of doing this with a single class (e.g. `UnitDistance` that stores the distance as a double and an object representing the unit). You'll need an interface somewhere...
+- My solution in `recap/code/UnitDistance`
+- Could you solve this with an abstract class instead of an interface? How?
 
 
 ----
+
+
+To help understand this exercise, think about what `unit` objects need to **do**. Interfaces define the methods that objects must pefform, i.e. the things they must be able to do. In this example, a unit needs to be able to convert a value into some standard (i.e. for distances, we convert everything to metres) and provide a string for displaying (e.g. m, km, ft).
+
+In my solution there is another example of interfaces: `Comparable`, which you saw in semester 1, that allows, e.g., objects in an array to be sorted.
+
+
+
 
 ## `public`, `private` and `protected`
 
@@ -160,7 +172,6 @@
 	- `areaOfCircle` is used without creating a `MyMath` object
 	- Another static thing is used here - what is it?
 
-----
 
 ----
 
