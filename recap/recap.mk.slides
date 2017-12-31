@@ -144,6 +144,7 @@
 ----
 
 
+# Some odds and ends
 
 ## `public`, `private` and `protected`
 
@@ -200,81 +201,6 @@
 
 ----
 
-## Evaluating expressions
-
-- Consider the expression $2 + 3*4$ (i.e. $2+(3*4)$)
-- It can be represented by a *syntax tree*
-
-![](Figures/stack1.jpg)
-
-- Traversing depth-first, left to right we get: `2 3 4 x +`
-- This can be evaluated via the stack...
-
-
-----
-
-![2 is added to the stack](Figures/stack2.jpg)
-
-----
-
-![3 is added to the stack](Figures/stack3.jpg)
-
-----
-
-![4 is added to the stack](Figures/stack4.jpg)
-
----
-
-![`x` operator pops out top element, multiplies it by new top element](Figures/stack5.jpg)
-
-----
-
-![`x` operator pops out top element, adds it to new top element](Figures/stack6.jpg)
-
-----
-
-## Aside: Reverse Polish Notation
-
-- This calculation was performed in Reverse Polish Notation
-- Operators appear immediately after operands e.g.
-	- `32-5+` = `(3-2) + 5`
-	- `45*2-` = `(4x5) - 2`
-	- `234++` = `(2+3) + 4`
-	- `512+4x+3-` = ?
-- See [this](http://en.wikipedia.org/wiki/Reverse_Polish_notation) 
-
-----
-
-## Stacks and methods
-
-- When a method is called, a *stack frame* is created
-	- An area at the top of the stack with space for the method to store local variables
-
-![](Figures/stackframe1.jpg)
-
-----
-
-![](Figures/stackframe2.jpg)
-
-----
-
-![](Figures/stackframe3.jpg)
-
-----
-
-![](Figures/stackframe4.jpg)
-
-----
-
-![](Figures/stackframe5.jpg)
-
-----
-
-![](Figures/stackframe6.jpg)
-
-----
-
-
 
 ## The Heap
 
@@ -284,7 +210,7 @@
 	- i.e. each thread can access objects in the heap
 	- Useful, but causes all of the multi-threading problems we wil see
 - In Java, objects are stored in the heap, references to objects are stored in the stack
-	- This is very important, and we'll come back to it later...
+	- This is very important, and we will come back to it later...
 
 ----
 
@@ -449,6 +375,56 @@ a+=" simon";
 
 ----
 
+# Some useful Java objects
+
+## ArrayList
+
+- Java arrays are of fixed length
+- `ArrayList` gives you an object that can handle arrays of any object that change length
+
+~~~~{.java}
+ArrayList<Integer> a = new ArrayList();
+a.add(3);
+a.add(5);
+System.out.println(a.contains(4)); // Checks is 4 is in there
+~~~~
+
+
+----
+
+## HashSet
+
+- Useful way of keeping a set of objects together (not ordered)
+
+~~~~{.java}
+	HashSet<String> h = new HashSet<String>();
+	h.add("hello");
+	h.add("simon");
+	h.add("hello"); // Wont add as already in there
+	h.contains("hello"); // returns true
+	h.remove("simon"); // removes this one
+~~~~
+
+- Very fast for checking if an item is in there
+
+----
+
+## HashMap
+
+- Useful way of storing key,value pairs
+
+~~~~{.java}
+	HashMap<String,Double> h = new HashMap<String,Double>();
+	h.put("banana",3.0);
+	h.put("apple",2.0);
+	System.out.println(h.get("apple")); //print 2
+	h.keySet(); // Returns a set of the keys
+~~~~
+
+- Very fast for obtaining items for a particular key
+
+----
+
 # Testing
 
 ## Debugging
@@ -573,7 +549,7 @@ public class AssertionExample {
 	}
 	public void decrement(int d) {
 		if(d>myInt) {
-			// Can't decrement!
+			// Cannot decrement!
 			System.out.println("Can't decrement!!");
 		}else {
 			myInt = myInt - d;
@@ -633,93 +609,38 @@ public class AssertionExample2 {
 
 ----
 
-# Tools
+# Things we are not covering here
 
-## Version control
+## Testing
 
-- Keeping large projects organised and backed up, particularly if there are multiple authors
-- Examples:
-	- Git
-	- SVN
+- We have only touched upon testing. It's very important! Those of you doing SE will cover it more there.
+- Much software engineering is now done in a *test driven* manner.
+	- First write test cases and then write code.
+	- Stop coding when the test cases are finished.
+	- Writing a good set of test cases is hard!
 
-----
+## Data structures
 
-## A short introduction to Git
+- We make use of Java objects (e.g. `ArrayList`) but we don't worry about how Java implements this
+- We also don't worry too much about the efficiency of different data structures and algorithms
+- Those of you in ADS will do lots of this
 
-- Git
-	- Version control system
-- Github
-	- A free server that hosts Git repositories
-
-----
-
-- Each git repository is a hierarchy of directories
-- Git keeps track of how files change within the repository
-- Git stores snapshots of the file system, *not* changes to files
-- Each snapshot is called a `commit`
-- I *strongly* recommend you read the documentation at [git-scm.com](http://git-scm.com)
-
-----
-
-![The three components of Git (figure from git-scm.com)](http://git-scm.com/book/en/v2/book/01-introduction/images/areas.png)
-
-----
-
-![The repository (from git-scm.com)](http://git-scm.com/book/en/v2/book/01-introduction/images/snapshots.png)
-
-----
-
-- *tracked* files are files that are under Git's control
-- You have to manually tell it which files to track
-	- although it will automatically ignore file types listed in the `.gitignore` file in the project root.
-- The Git process:
-	- You make some changes (changing files, adding files, removing files)
-	- You `add` those changed files to the staging area
-	- You `commit` those changes to the local database
-- If in doubt, use `git status` to see what's going on
-- Example...
-
-----
-
-## Branching
-
-- Git's real power is in the branching functionality
-- A branch is a points to a commit (a particular snapshot)
-- The Head is a special pointer that points to the current branch
-- Each repository has a `master` branch
-	- Nothing special about it, it's just the default name for the first branch
-- We can create and move between (`checkout`) other branches
-- [http://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging](http://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging)
-- Example
-
-----
-
-## Creating a repository
-
-- Two ways:
-	- move into the desired root directory of the repository and type `git init` (*try this!*)
-	- `Clone` a repository from a server (e.g. Github) (*try this too!*)
-	- Note that the repository on the server is just another local Git repository
-
-----
-
-## Collaborating with Git
-
-- Several users clone the same repository
-- Changes can be `pulled` down from the server (`git pull origin master`)
-	- pulls the master branch from the server and merges it into the current local branch (handling conflicts)
-- Local changes can be `pushed` up to the server (`git push origin master`)
-- Example...
-
-----
 
 ## Build systems
 
-- To compile complex projects that depend on code from different sources
+- Compiling from the command line is fine for simple projects
+- But..when you have a more complex project with lots of *dependencies* things get very complex 
+- Systems exist to help you with this
 - Examples:
 	- Maven (the current standard for Java)
 	- ANT (older but still popular)
 - See Tim Storer's ANT guide on Moodle
+
+## Software Engineering
+
+- Programming is only a small part of building software
+- Engineering large software projects is hard (evidenced by the number of times they end badly)
+- Youll get lots of SE in, erm, SE
 
 
 
