@@ -1,6 +1,6 @@
 % APIT: Concurrency
 % Simon Rogers
-% 30/10/2014
+% 05/01/2018
 
 # Overview
 
@@ -23,17 +23,20 @@
 
 ----
  
+## Mental models
+
+ - Previously you might have had the model in your head of the computer **being** somewhere in your programme.
+ - With multiple *threads*, each thread is (potentially) in a different place *at the same time*!
+
+----
 
 # Creating threads in Java
 
-## The options
-
 There are two ways of creating threads in Java:
 
-- Implementing the `Runnable` interface
-- Extending the `Thread` class
-
-
+- You must create a class that either:
+	- Implements the `Runnable` interface
+	- Extends the `Thread` class
 
 
 ----
@@ -53,7 +56,8 @@ public interface Runnable {
 To use it:
 
 - create a new class implementing this interface
-- create a `Thread` object
+- create a `Thread` object passing an instance of your class
+- call `Thread.start()` (**Note: we never call `run()`**)
 - our new class _must_ have a `run()` method.
 
 ----
@@ -138,7 +142,7 @@ Producing the following output:
 
 We can see from the order of the `println` statements that both threads are running at the same time.
 
-- The order will change every time we run it
+- The order might change every time we run it
 - The program stops once all threads are complete
 - It's impossible for us to know when Java switches from one thread to another
 - Note: They're not necessarily on different processors / cores, but might be
@@ -157,6 +161,25 @@ We can see from the order of the `println` statements that both threads are runn
 
 ----
 
+
+## You've been using threads all along
+
+Can you predict the output of this?
+
+~~~~{.java}
+public class MainThread extends Thread{
+	public void run() {
+		try {
+			Thread.sleep(100);
+		}catch(InterruptedException e) {}
+		System.out.println("Thread finished");
+	}
+	public static void main(String[] args) {
+		for(int i=0;i<10;i++) { new MainThread().start(); }
+		System.out.println("THE END");
+	}
+}
+~~~~
 
 ## Thread names
 
@@ -203,7 +226,7 @@ thread.getName()
 
 ## Sleeping threads
 
-- `Thread.sleep(long time)` is a method that throws `InterruptedException` so it has to be caught:
+- `Thread.sleep(long time)` is a blocking method which can be stopped by interrupting. If this happens, it throws `InterruptedException` so we must catch it somewhere:
 
 ~~~~ {.java}
 public void run() {
@@ -223,6 +246,8 @@ public void run() {
 - In many applications it will be useful to know if a Thread has finished.
 - `someThread.join()` pauses the current thread until `someThread` has finished.
 - `join()` throws an `InterruptedException`
+- Syntax: `aThread.join()` pauses the thread **that calls the method** until `aThread` has finished.
+	- This can be a bit confusing!
 
 ----
 

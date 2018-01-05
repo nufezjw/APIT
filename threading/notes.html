@@ -5,6 +5,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Simon Rogers" />
+  <meta name="date" content="2018-05-01" />
   <title>APIT: Concurrency</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -50,17 +51,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">APIT: Concurrency</h1>
 <h2 class="author">Simon Rogers</h2>
-<h3 class="date">30/10/2014</h3>
+<h3 class="date">05/01/2018</h3>
 </div>
 <div id="TOC">
 <ul>
 <li><a href="#overview">Overview</a><ul>
 <li><a href="#what-is-concurrency">What is concurrency?</a></li>
+<li><a href="#mental-models">Mental models</a></li>
 </ul></li>
 <li><a href="#creating-threads-in-java">Creating threads in Java</a><ul>
-<li><a href="#the-options">The options</a></li>
 <li><a href="#implementing-the-runnable-interface">Implementing the <code>Runnable</code> interface</a></li>
 <li><a href="#extending-the-thread-class">Extending the <code>Thread</code> class</a></li>
+<li><a href="#youve-been-using-threads-all-along">You've been using threads all along</a></li>
 <li><a href="#thread-names">Thread names</a></li>
 <li><a href="#blocking-methods">Blocking methods</a></li>
 <li><a href="#interrupted-exception">Interrupted Exception</a></li>
@@ -103,12 +105,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>In Java, we can use <code>threads</code> to build concurrent programs</li>
 </ul>
 <hr />
+<h2 id="mental-models">Mental models</h2>
+<ul>
+<li>Previously you might have had the model in your head of the computer <strong>being</strong> somewhere in your programme.</li>
+<li>With multiple <em>threads</em>, each thread is (potentially) in a different place <em>at the same time</em>!</li>
+</ul>
+<hr />
 <h1 id="creating-threads-in-java">Creating threads in Java</h1>
-<h2 id="the-options">The options</h2>
 <p>There are two ways of creating threads in Java:</p>
 <ul>
-<li>Implementing the <code>Runnable</code> interface</li>
-<li>Extending the <code>Thread</code> class</li>
+<li>You must create a class that either:
+<ul>
+<li>Implements the <code>Runnable</code> interface</li>
+<li>Extends the <code>Thread</code> class</li>
+</ul></li>
 </ul>
 <hr />
 <h2 id="implementing-the-runnable-interface">Implementing the <code>Runnable</code> interface</h2>
@@ -121,7 +131,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>To use it:</p>
 <ul>
 <li>create a new class implementing this interface</li>
-<li>create a <code>Thread</code> object</li>
+<li>create a <code>Thread</code> object passing an instance of your class</li>
+<li>call <code>Thread.start()</code> (<strong>Note: we never call <code>run()</code></strong>)</li>
 <li>our new class <em>must</em> have a <code>run()</code> method.</li>
 </ul>
 <hr />
@@ -151,7 +162,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 }</code></pre></div>
 <p><code>t.start()</code> starts the thread by invoking the <code>run()</code> method of <code>PointlessPrint</code></p>
 <hr />
-<p>From now on, we'll just use nested classes for things like this, to make the code a bit more concise:</p>
+<p>From now on, we'll use nested classes for things like this, to make the code a bit more concise:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> RunnableTest {
     <span class="kw">private</span> <span class="dt">static</span> <span class="kw">class</span> PointlessPrint <span class="kw">implements</span> Runnable {
         <span class="kw">private</span> String message;
@@ -228,7 +239,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <hr />
 <p>We can see from the order of the <code>println</code> statements that both threads are running at the same time.</p>
 <ul>
-<li>The order will change every time we run it</li>
+<li>The order might change every time we run it</li>
 <li>The program stops once all threads are complete</li>
 <li>It's impossible for us to know when Java switches from one thread to another</li>
 <li>Note: They're not necessarily on different processors / cores, but might be</li>
@@ -287,6 +298,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             threads[i] = <span class="kw">new</span> <span class="fu">PointlessPrint</span>(<span class="st">&quot;I am thread &quot;</span> + i,<span class="dv">10</span>);
             threads[i].<span class="fu">start</span>();
         }
+    }
+}</code></pre></div>
+<h2 id="youve-been-using-threads-all-along">You've been using threads all along</h2>
+<p>Can you predict the output of this?</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> MainThread <span class="kw">extends</span> Thread{
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+        <span class="kw">try</span> {
+            Thread.<span class="fu">sleep</span>(<span class="dv">100</span>);
+        }<span class="kw">catch</span>(InterruptedException e) {}
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Thread finished&quot;</span>);
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;<span class="dv">10</span>;i++) { <span class="kw">new</span> <span class="fu">MainThread</span>().<span class="fu">start</span>(); }
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;THE END&quot;</span>);
     }
 }</code></pre></div>
 <h2 id="thread-names">Thread names</h2>
@@ -393,7 +418,7 @@ Thread t = <span class="kw">new</span> Thread(<span class="st">&quot;my name&quo
 }</code></pre></div>
 <h2 id="sleeping-threads">Sleeping threads</h2>
 <ul>
-<li><code>Thread.sleep(long time)</code> is a method that throws <code>InterruptedException</code> so it has to be caught:</li>
+<li><code>Thread.sleep(long time)</code> is a blocking method which can be stopped by interrupting. If this happens, it throws <code>InterruptedException</code> so we must catch it somewhere:</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
     <span class="kw">try</span> {
@@ -408,6 +433,10 @@ Thread t = <span class="kw">new</span> Thread(<span class="st">&quot;my name&quo
 <li>In many applications it will be useful to know if a Thread has finished.</li>
 <li><code>someThread.join()</code> pauses the current thread until <code>someThread</code> has finished.</li>
 <li><code>join()</code> throws an <code>InterruptedException</code></li>
+<li>Syntax: <code>aThread.join()</code> pauses the thread <strong>that calls the method</strong> until <code>aThread</code> has finished.
+<ul>
+<li>This can be a bit confusing!</li>
+</ul></li>
 </ul>
 <hr />
 <h2 id="the-benefits-of-parallel-processing">The benefits of parallel processing</h2>
