@@ -1,0 +1,866 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Simon Rogers" />
+  <title>APIT: Concurrency</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="pandoc.css" type="text/css" />
+</head>
+<body>
+<div id="header">
+<h1 class="title">APIT: Concurrency</h1>
+<h2 class="author">Simon Rogers</h2>
+<h3 class="date">30/10/2014</h3>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#overview">Overview</a><ul>
+<li><a href="#what-is-concurrency">What is concurrency?</a></li>
+</ul></li>
+<li><a href="#creating-threads-in-java">Creating threads in Java</a><ul>
+<li><a href="#the-options">The options</a></li>
+<li><a href="#implementing-the-runnable-interface">Implementing the <code>Runnable</code> interface</a></li>
+<li><a href="#extending-the-thread-class">Extending the <code>Thread</code> class</a></li>
+<li><a href="#thread-names">Thread names</a></li>
+<li><a href="#blocking-methods">Blocking methods</a></li>
+<li><a href="#interrupted-exception">Interrupted Exception</a></li>
+<li><a href="#sleeping-threads">Sleeping threads</a></li>
+<li><a href="#join">Join</a></li>
+<li><a href="#the-benefits-of-parallel-processing">The benefits of parallel processing</a></li>
+<li><a href="#merge-sort">Merge sort</a></li>
+<li><a href="#shared-variables">Shared variables</a></li>
+<li><a href="#synchronized">Synchronized</a></li>
+<li><a href="#locks">Locks</a></li>
+<li><a href="#deadlocks">Deadlocks</a></li>
+<li><a href="#conditions">Conditions</a></li>
+</ul></li>
+<li><a href="#threads-in-swing">Threads in Swing</a><ul>
+<li><a href="#the-event-dispatch-thread">The <code>event dispatch</code> thread</a></li>
+<li><a href="#longer-jobs---the-swingworker-class">Longer jobs - the <code>SwingWorker</code> class</a></li>
+<li><a href="#other-swing-thread-operations">Other swing thread operations</a></li>
+<li><a href="#swing-example---game-of-life">Swing example - Game Of Life</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="overview">Overview</h1>
+<ul>
+<li>Concurrency</li>
+<li>Threading</li>
+<li>Solving threading problems</li>
+<li>Threads in Swing</li>
+</ul>
+<hr />
+<h2 id="what-is-concurrency">What is concurrency?</h2>
+<ul>
+<li>Multiple parts of the program running simultaneously</li>
+<li>Why?
+<ul>
+<li>Make use of multiple processors</li>
+<li>Efficient integration with slow devices (e.g. disks)</li>
+<li>User-friendly-ness (responsive OS)</li>
+</ul></li>
+<li><a href="https://birrell.org/andrew/papers/035-Threads.pdf">Useful (but oldish) paper</a></li>
+<li>In Java, we can use <code>threads</code> to build concurrent programs</li>
+</ul>
+<hr />
+<h1 id="creating-threads-in-java">Creating threads in Java</h1>
+<h2 id="the-options">The options</h2>
+<p>There are two ways of creating threads in Java:</p>
+<ul>
+<li>Implementing the <code>Runnable</code> interface</li>
+<li>Extending the <code>Thread</code> class</li>
+</ul>
+<hr />
+<h2 id="implementing-the-runnable-interface">Implementing the <code>Runnable</code> interface</h2>
+<p>The <code>Runnable</code> interface is very simple:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">interface</span> Runnable {
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+
+    }
+}</code></pre></div>
+<p>To use it:</p>
+<ul>
+<li>create a new class implementing this interface</li>
+<li>create a <code>Thread</code> object</li>
+<li>our new class <em>must</em> have a <code>run()</code> method.</li>
+</ul>
+<hr />
+<p>For example, the following class implements <code>Runnable</code> and prints a particular <code>String</code> <code>n</code> times:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> PointlessPrint <span class="kw">implements</span> Runnable {
+    <span class="kw">private</span> String message;
+    <span class="kw">private</span> <span class="dt">int</span> n;
+    <span class="kw">public</span> <span class="fu">PointlessPrint</span>(String message,<span class="dt">int</span> n) {
+        <span class="kw">this</span>.<span class="fu">message</span> = message;
+        <span class="kw">this</span>.<span class="fu">n</span> = n;
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+        <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n;i++) {
+            System.<span class="fu">out</span>.<span class="fu">println</span>(i + <span class="st">&quot;/&quot;</span> + 
+                n + <span class="st">&quot; &quot;</span> + message);
+        }
+    }
+}</code></pre></div>
+<hr />
+<p>To use this class, we must create an instance and then place this instance within an instance of the <code>Thread</code> object:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> RunnableTest {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        PointlessPrint p = <span class="kw">new</span> <span class="fu">PointLessPrint</span>(<span class="st">&quot;Hello&quot;</span>,<span class="dv">100</span>);
+        Thread t = <span class="kw">new</span> Thread(p);
+        t.<span class="fu">start</span>();
+    }
+}</code></pre></div>
+<p><code>t.start()</code> starts the thread by invoking the <code>run()</code> method of <code>PointlessPrint</code></p>
+<hr />
+<p>From now on, we'll just use nested classes for things like this, to make the code a bit more concise:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> RunnableTest {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="kw">class</span> PointlessPrint <span class="kw">implements</span> Runnable {
+        <span class="kw">private</span> String message;
+        <span class="kw">private</span> <span class="dt">int</span> n;
+        <span class="kw">public</span> <span class="fu">PointlessPrint</span>(String message,<span class="dt">int</span> n) {
+            <span class="kw">this</span>.<span class="fu">message</span> = message;
+            <span class="kw">this</span>.<span class="fu">n</span> = n;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+            <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n;i++) {
+                System.<span class="fu">out</span>.<span class="fu">println</span>(i + <span class="st">&quot;/&quot;</span> + n + <span class="st">&quot; &quot;</span> + message);
+            }
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        PointlessPrint p = <span class="kw">new</span> <span class="fu">PointlessPrint</span>(<span class="st">&quot;Hello&quot;</span>,<span class="dv">100</span>);
+        Thread t = <span class="kw">new</span> Thread(p);
+        t.<span class="fu">start</span>();
+    }
+}</code></pre></div>
+<p><em>Question:</em> What would happen if <code>PointlessPrint</code> wasn't <code>static</code>?</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> RunnableTest2 {
+    <span class="kw">private</span> <span class="kw">class</span> PointlessPrint <span class="kw">implements</span> Runnable {
+        <span class="kw">private</span> String message;
+        <span class="kw">private</span> <span class="dt">int</span> n;
+        <span class="kw">public</span> <span class="fu">PointlessPrint</span>(String message,<span class="dt">int</span> n) {
+            <span class="kw">this</span>.<span class="fu">message</span> = message;
+            <span class="kw">this</span>.<span class="fu">n</span> = n;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+            <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n;i++) {
+                System.<span class="fu">out</span>.<span class="fu">println</span>(i + <span class="st">&quot;/&quot;</span> + n + <span class="st">&quot; &quot;</span> + message);
+            }
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        RunnableTest2 r = <span class="kw">new</span> <span class="fu">RunnableTest2</span>();
+        PointlessPrint p = r.<span class="fu">new</span> 
+            <span class="fu">PointlessPrint</span>(<span class="st">&quot;Hello&quot;</span>,<span class="dv">100</span>);
+        Thread t = <span class="kw">new</span> Thread(p);
+        t.<span class="fu">start</span>();
+    }
+}</code></pre></div>
+<hr />
+<p>The whole point of threads is that we can simultaneously create many of them. This is straightforward via an array of <code>Thread</code> objects:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+    <span class="dt">int</span> nThreads = <span class="dv">2</span>;
+    Thread[] threads = <span class="kw">new</span> Thread[nThreads];
+    <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;nThreads;i++)
+    {
+        PointlessPrint p = <span class="kw">new</span> <span class="fu">PointlessPrint</span>(
+            <span class="st">&quot;I am thread &quot;</span> + i,<span class="dv">10</span>);
+        threads[i] = <span class="kw">new</span> Thread(p);
+        threads[i].<span class="fu">start</span>();
+    }
+}</code></pre></div>
+<hr />
+<p>Producing the following output:</p>
+<pre><code>0/10 I am thread 0
+1/10 I am thread 0
+0/10 I am thread 1
+1/10 I am thread 1
+2/10 I am thread 0
+2/10 I am thread 1
+.
+.
+6/10 I am thread 1
+7/10 I am thread 0
+7/10 I am thread 1
+8/10 I am thread 0
+8/10 I am thread 1
+9/10 I am thread 0
+9/10 I am thread 1</code></pre>
+<hr />
+<p>We can see from the order of the <code>println</code> statements that both threads are running at the same time.</p>
+<ul>
+<li>The order will change every time we run it</li>
+<li>The program stops once all threads are complete</li>
+<li>It's impossible for us to know when Java switches from one thread to another</li>
+<li>Note: They're not necessarily on different processors / cores, but might be</li>
+<li>Note: Java always puts the main method in its own thread (you've been using threads all along!)</li>
+</ul>
+<hr />
+<p>As an aside, here are two alternative <code>main</code> methods that would do the same thing. They should both make sense to you:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+    <span class="dt">int</span> nThreads = <span class="dv">2</span>;
+    Thread[] threads = <span class="kw">new</span> Thread[nThreads];
+    <span class="co">// Declare p outside the loop if we want future access to it</span>
+    PointlessPrint[] p = <span class="kw">new</span> PointlessPrint[nThreads];
+    <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;nThreads;i++)
+    {
+        p[i] = <span class="kw">new</span> <span class="fu">PointlessPrint</span>(<span class="st">&quot;I am thread &quot;</span> + i,<span class="dv">10</span>);
+        threads[i] = <span class="kw">new</span> Thread(p[i]);
+        threads[i].<span class="fu">start</span>();
+    }
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+    <span class="dt">int</span> nThreads = <span class="dv">2</span>;
+    Thread[] threads = <span class="kw">new</span> Thread[nThreads];
+    <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;nThreads;i++)
+    {
+        <span class="co">// Anonymous PointlessPrint object</span>
+        threads[i] = <span class="kw">new</span> Thread(<span class="kw">new</span> <span class="fu">PointlessPrint</span>(<span class="st">&quot;I am thread &quot;</span> + i,<span class="dv">10</span>));
+        threads[i].<span class="fu">start</span>();
+    }
+}</code></pre></div>
+<hr />
+<h2 id="extending-the-thread-class">Extending the <code>Thread</code> class</h2>
+<ul>
+<li>The alternative to implementing the <code>Runnable</code> interface</li>
+<li>Create a new class that extends <code>Thread</code></li>
+<li>The new class has to have a method that overrides <code>run()</code></li>
+<li>The equivalent to our previous example can be found in <code>SimpleThreadTest</code></li>
+</ul>
+<hr />
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> SimpleThreadTest {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="kw">class</span> PointlessPrint <span class="kw">extends</span> Thread {
+        <span class="kw">private</span> String message;
+        <span class="kw">private</span> <span class="dt">int</span> n;
+        <span class="kw">public</span> <span class="fu">PointlessPrint</span>(String message, <span class="dt">int</span> n) {
+            <span class="kw">this</span>.<span class="fu">message</span> = message;
+            <span class="kw">this</span>.<span class="fu">n</span> = n;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+            <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n;i++) {
+                System.<span class="fu">out</span>.<span class="fu">println</span>(i + <span class="st">&quot;/&quot;</span> + n + <span class="st">&quot; &quot;</span> + message);
+            }
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        PointlessPrint[] threads = <span class="kw">new</span> PointlessPrint[<span class="dv">2</span>];
+        <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;<span class="dv">2</span>;i++) {
+            threads[i] = <span class="kw">new</span> <span class="fu">PointlessPrint</span>(<span class="st">&quot;I am thread &quot;</span> + i,<span class="dv">10</span>);
+            threads[i].<span class="fu">start</span>();
+        }
+    }
+}</code></pre></div>
+<h2 id="thread-names">Thread names</h2>
+<ul>
+<li>In our examples, we passed a message to a thread to help identify it</li>
+<li>Threads can also be given names through their constructor:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">Thread t = <span class="kw">new</span> Thread(aRunnableThing,<span class="st">&quot;my name&quot;</span>);
+Thread t = <span class="kw">new</span> Thread(<span class="st">&quot;my name&quot;</span>);</code></pre></div>
+<ul>
+<li>which can be accessed via:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">thread.<span class="fu">getName</span>()</code></pre></div>
+<ul>
+<li>See notes for examples</li>
+</ul>
+<p>Example when implementing <code>Runnable</code>:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> ThreadNameTest {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="kw">class</span> PointlessThread <span class="kw">implements</span> Runnable {
+        <span class="kw">private</span> <span class="dt">int</span> n;
+        <span class="kw">public</span> <span class="fu">PointlessThread</span>(<span class="dt">int</span> n) {
+            <span class="kw">this</span>.<span class="fu">n</span> = n;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+            <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n;i++) {
+                System.<span class="fu">out</span>.<span class="fu">println</span>(Thread.<span class="fu">currentThread</span>().<span class="fu">getName</span>() +<span class="st">&quot; &quot;</span>+ i);
+            }
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        Thread[] threads = <span class="kw">new</span> Thread[<span class="dv">2</span>];
+        <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;<span class="dv">2</span>;i++) {
+            threads[i] = <span class="kw">new</span> Thread(<span class="kw">new</span> <span class="fu">PointlessThread</span>(<span class="dv">10</span>),<span class="st">&quot;I am &quot;</span> + i);
+            threads[i].<span class="fu">start</span>();
+        }
+    }
+}</code></pre></div>
+<p>Example when extending <code>Thread</code>:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> ThreadNameTest2 {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="kw">class</span> PointlessThread <span class="kw">extends</span> Thread {
+        <span class="kw">private</span> <span class="dt">int</span> n;
+        <span class="kw">public</span> <span class="fu">PointlessThread</span>(<span class="dt">int</span> n,String name) {
+            <span class="kw">super</span>(name); <span class="co">// Thread constructor</span>
+            <span class="kw">this</span>.<span class="fu">n</span> = n;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+            <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n;i++) {
+                System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="kw">this</span>.<span class="fu">getName</span>() +<span class="st">&quot; &quot;</span>+ i);
+            }
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        PointlessThread[] threads = <span class="kw">new</span> PointlessThread[<span class="dv">2</span>];
+        <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;<span class="dv">2</span>;i++) {
+            threads[i] = <span class="kw">new</span> <span class="fu">PointlessThread</span>(<span class="dv">10</span>,<span class="st">&quot;Thread &quot;</span> + i);
+            threads[i].<span class="fu">start</span>();
+        }
+    }
+}</code></pre></div>
+<hr />
+<h2 id="blocking-methods">Blocking methods</h2>
+<ul>
+<li>Blocking methods are methods that rely on something else within the system for termination
+<ul>
+<li>Waiting for a timer to elapse</li>
+<li>Waiting for another thread to end</li>
+</ul></li>
+<li>Because these methods rely on something external, they might be waiting forever.</li>
+<li>To ensure smooth running, they should be <em>cancelable</em></li>
+</ul>
+<hr />
+<h2 id="interrupted-exception">Interrupted Exception</h2>
+<ul>
+<li>Threads can be interrupted by other threads</li>
+<li>When a thread is interrupted, one of two things happen:
+<ul>
+<li>If it is running an interruptable method (e.g. <code>Thread.sleep()</code>), the method unblocks and throws the <code>InterruptedException</code></li>
+<li>Otherwise, its (boolean) interrupted status is set</li>
+</ul></li>
+<li>Interrupted status can be read with <code>Thread.isInterrupted()</code></li>
+<li>Interrupted status can be read and reset (0) with <code>Thread.interrupted()</code></li>
+</ul>
+<hr />
+<p>The following code will start a thread, wait a random amount of time and then interrupt it. When it is interrupted, it just finishes.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import java.util.Random;</span>
+<span class="kw">public</span> <span class="kw">class</span> InterruptTest {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> InterruptableThread <span class="kw">implements</span> Runnable {
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+            <span class="dt">int</span> i=<span class="dv">0</span>;
+            <span class="kw">while</span>(Thread.<span class="fu">currentThread</span>().<span class="fu">isInterrupted</span>()==<span class="kw">false</span>) {
+                System.<span class="fu">out</span>.<span class="fu">println</span>(i++);
+            }
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        Thread t = <span class="kw">new</span> Thread(<span class="kw">new</span> <span class="fu">InterruptableThread</span>());
+        t.<span class="fu">start</span>();
+        <span class="dt">int</span> r = <span class="kw">new</span> Random().<span class="fu">nextInt</span>();
+        <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;r;i++) {
+            <span class="co">// Nothing, just eat up some time</span>
+        }
+        t.<span class="fu">interrupt</span>();
+    }
+}</code></pre></div>
+<h2 id="sleeping-threads">Sleeping threads</h2>
+<ul>
+<li><code>Thread.sleep(long time)</code> is a method that throws <code>InterruptedException</code> so it has to be caught:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+    <span class="kw">try</span> {
+        Thread.<span class="fu">sleep</span>(<span class="dv">1000</span>);
+    }<span class="kw">catch</span> (InterruptedException e) {
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;You woke me up&quot;</span>);
+    }
+}</code></pre></div>
+<hr />
+<h2 id="join">Join</h2>
+<ul>
+<li>In many applications it will be useful to know if a Thread has finished.</li>
+<li><code>someThread.join()</code> pauses the current thread until <code>someThread</code> has finished.</li>
+<li><code>join()</code> throws an <code>InterruptedException</code></li>
+</ul>
+<hr />
+<h2 id="the-benefits-of-parallel-processing">The benefits of parallel processing</h2>
+<ul>
+<li>Many machines have multiple cores / processors</li>
+<li>Threads can be placed on different cores / processors
+<ul>
+<li>Java does this for us - we have no control</li>
+</ul></li>
+<li>Running things in parallel should give us speed improvements
+<ul>
+<li>Although it increases system book-keeping</li>
+</ul></li>
+<li>Class example: merge sort</li>
+</ul>
+<hr />
+<h2 id="merge-sort">Merge sort</h2>
+<ul>
+<li>We'd like to sort the values in a large array.</li>
+<li>Can be made parallel:
+<ul>
+<li>Split the array into N smaller arrays</li>
+<li>Sort the smaller arrays</li>
+<li>Merge the results together</li>
+</ul></li>
+<li>How much speed-up will this give?</li>
+</ul>
+<hr />
+<h2 id="shared-variables">Shared variables</h2>
+<ul>
+<li>A benefit of threads is the shared address space
+<ul>
+<li>Multiple threads can access the same shared resources</li>
+</ul></li>
+<li>For example, suppose I would like to make a system where several threads can all increment the same counter</li>
+<li>See <code>CounterExample</code></li>
+<li>Why can't we just pass an <code>Integer</code> around instead of a <code>MyCounter</code> object? (see <a href="http://www.javapractices.com/topic/TopicAction.do?Id=29">Immutable objects</a> and <a href="http://docs.oracle.com/javase/tutorial/essential/concurrency/immutable.html">Immutable objects 2</a>)</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> CounterExample {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> MyCounter {
+        <span class="co">// We need this method because ints are immutable</span>
+        <span class="kw">private</span> <span class="dt">int</span> count = <span class="dv">0</span>;
+        <span class="kw">public</span> <span class="dt">int</span> <span class="fu">getCount</span>() {
+            <span class="kw">return</span> count;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">setCount</span>(<span class="dt">int</span> count) {
+            <span class="kw">this</span>.<span class="fu">count</span> = count;
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> Counter <span class="kw">extends</span> Thread {
+        <span class="kw">private</span> MyCounter count;
+        <span class="kw">private</span> <span class="dt">int</span> n;
+        <span class="kw">public</span> <span class="fu">Counter</span>(MyCounter count,<span class="dt">int</span> n) {
+            <span class="kw">this</span>.<span class="fu">count</span> = count;
+            <span class="kw">this</span>.<span class="fu">n</span> = n;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+            <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n;i++) {
+                <span class="dt">int</span> temp = count.<span class="fu">getCount</span>();
+                temp++;
+                count.<span class="fu">setCount</span>(temp);
+            }
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        MyCounter count = <span class="kw">new</span> <span class="fu">MyCounter</span>();
+        Counter c = <span class="kw">new</span> <span class="fu">Counter</span>(count,<span class="dv">100</span>);
+        c.<span class="fu">start</span>();
+        <span class="kw">try</span> {
+            c.<span class="fu">join</span>();
+        }<span class="kw">catch</span>(InterruptedException e) {
+            <span class="co">//Do nothing</span>
+        }
+        System.<span class="fu">out</span>.<span class="fu">println</span>(count.<span class="fu">getCount</span>());
+    }
+}</code></pre></div>
+<p>This code outputs <code>100</code> at the end, as you might expect.</p>
+<p><em>Question:</em> try removing the <code>join</code> code (i.e. everything inside the <code>try</code> <code>catch</code> block) - what happens?</p>
+<p>Let's now update <code>main</code> so that it creates several threads, all accessing the same <code>MyCounter</code> object (<code>CounterExample2</code>):</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        MyCounter count = <span class="kw">new</span> <span class="fu">MyCounter</span>();
+        <span class="dt">int</span> nCounters = <span class="dv">100</span>;
+        Counter[] c = <span class="kw">new</span> Counter[nCounters];
+        <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;nCounters;i++) {
+            c[i] = <span class="kw">new</span> <span class="fu">Counter</span>(count,<span class="dv">1000</span>);
+            c[i].<span class="fu">start</span>();
+        }
+        <span class="kw">try</span> {
+            <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;nCounters;i++) {
+                c[i].<span class="fu">join</span>();
+            }
+        }<span class="kw">catch</span>(InterruptedException e) {
+            <span class="co">//Do nothing</span>
+        }
+        System.<span class="fu">out</span>.<span class="fu">println</span>(count.<span class="fu">getCount</span>());
+    }</code></pre></div>
+<p>If all works correctly, we should see 100 times 1000 (=100000). But we don't. Each time we run, we see something different (try it), always below 100000. What's happening?</p>
+<hr />
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+    <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n;i++) {
+        <span class="dt">int</span> temp = count.<span class="fu">getCount</span>();
+        temp++;
+        count.<span class="fu">setCount</span>(temp);
+    }
+}</code></pre></div>
+<p>The problem is found in the <code>run()</code> method:</p>
+<ul>
+<li>Remember that we have no idea when Java will move from one Thread to another.</li>
+<li>If it moves between the <code>getCount()</code> and <code>setCount()</code> methods...</li>
+</ul>
+<hr />
+<div class="figure">
+<img src="figures/threadcartoon1.jpg" alt="Single thread operation" />
+<p class="caption">Single thread operation</p>
+</div>
+<hr />
+<div class="figure">
+<img src="figures/threadcartoon2.jpg" alt="Multi-thread operation" />
+<p class="caption">Multi-thread operation</p>
+</div>
+<hr />
+<ul>
+<li>If control is passed between <code>get</code> and <code>set</code> the new thread sees an out of date value.
+<ul>
+<li>Remember: <code>temp</code> is local to each thread.</li>
+</ul></li>
+<li>In reality, thread 1 might be sitting dormant with <code>temp=5</code> for a long time</li>
+<li>When it finally updates it, it will effectively delete lots of updates performed by other threads</li>
+<li>It is known as a <em>race condition</em></li>
+<li>This is a <em>big</em> problem in multi-threaded programs</li>
+<li>We'll now look at ways of overcoming it</li>
+</ul>
+<hr />
+<h2 id="synchronized">Synchronized</h2>
+<ul>
+<li>To overcome race conditions, we must <em>lock</em> objects.</li>
+<li>All objects have an associated monitor that can be locked or unlocked (we don't see this)</li>
+<li>A thread can lock a monitor, ensuring no other threads can modify it</li>
+<li>Other threads trying are blocked until the lock is released</li>
+<li>The easiest way is with <code>synchonized</code> blocks and methods.</li>
+</ul>
+<hr />
+<ul>
+<li><code>CounterExample3</code> gives a new version of our Counter program</li>
+<li>Note that the incrementation is now done inside the class</li>
+<li>It still has the same problem, although perhaps not as extreme (try it and see. Why? Think about how <code>count++</code> is done and the chances of being interrupted at a bad point)</li>
+<li>We can solve our race condition by making the <code>increment()</code> a synchronised method
+<ul>
+<li>when any thread is invoking a synchronized method, all other threads trying to are paused until it has finished</li>
+</ul></li>
+<li>See <code>CounterExample4</code> ... problem solved</li>
+</ul>
+<hr />
+<ul>
+<li>Alternatively, we can just synchronize a block of code.</li>
+<li>E.g. instead of declaring <code>increment()</code> as <code>synchronized</code> we can:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+    <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n;i++) {
+        <span class="kw">synchronized</span>(count) {
+            count.<span class="fu">increment</span>()
+        }
+    }
+}</code></pre></div>
+<ul>
+<li>This causes the thread to lock the <code>count</code> object</li>
+<li>No other threads can modify <code>count</code> when the thread is in this block.</li>
+<li>This will also fix the problen - try it</li>
+<li>There are other blocks that could be synchronized - try some</li>
+</ul>
+<hr />
+<h2 id="locks">Locks</h2>
+<ul>
+<li>An alternative approach involves creating <code>Lock</code> objects</li>
+<li>For example, <code>ReentrantLock()</code> (<code>CounterExample5</code>):</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> MyCounter {
+    <span class="kw">private</span> <span class="dt">int</span> count = <span class="dv">0</span>;
+    <span class="kw">private</span> ReentrantLock counterLock = 
+        <span class="kw">new</span> ReentrantLock();
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">increment</span>() {
+        counterLock.<span class="fu">lock</span>();
+        count ++;
+        counterLock.<span class="fu">unlock</span>();
+    }
+    ...
+}</code></pre></div>
+<ul>
+<li>When <code>counterLock</code> is locked, no other thread can lock it until it has been unlocked (Phonebooth analogy in BigJava)</li>
+</ul>
+<hr />
+<ul>
+<li>There's a problem: if the code between <code>lock</code> and <code>unlock</code> throws an exception the <code>unlock</code> never happens
+<ul>
+<li>Phonebooth user collapsing??</li>
+</ul></li>
+<li>Always do the following to ensure the lock is released:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">someLock.<span class="fu">lock</span>();
+<span class="kw">try</span> {
+    <span class="co">// Some code</span>
+}
+<span class="kw">finally</span> {
+    someLock.<span class="fu">unlock</span>();
+}</code></pre></div>
+<hr />
+<h2 id="deadlocks">Deadlocks</h2>
+<ul>
+<li>What if two threads are both waiting for one another to release a lock?</li>
+<li>The program will hang indefinitely</li>
+<li>This is a <em>deadlock</em></li>
+<li>For example, suppose adding another object to out <code>CounterExample</code> that decrements <code>MyCounter</code>
+<ul>
+<li>If we set the system up so that in total the same amount is incremented and decremented then <code>count</code> will sometimes become negative (depending on ordering of events)</li>
+<li>See <code>CounterDecounter</code></li>
+</ul></li>
+</ul>
+<hr />
+<ul>
+<li>We would like to ensure this number never goes negative</li>
+<li>One way of doing this would be to put some kind of wait condition in the <code>decrement</code> method (<code>CounterDecounter2</code>):</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    counterLock.<span class="fu">lock</span>();
+    <span class="kw">try</span> {
+        <span class="kw">while</span>(count&lt;amount) {
+            Thread.<span class="fu">sleep</span>(<span class="dv">1</span>);
+    }<span class="kw">catch</span> (InterruptedException e) {
+        <span class="co">// fall through</span>
+    }<span class="kw">finally</span> {
+        counterLock.<span class="fu">unlock</span>();
+    }</code></pre></div>
+<hr />
+<ul>
+<li>This causes the program to hang whenever it tries to decrement by an <code>amount</code> that is greater than <code>count</code>
+<ul>
+<li>Because the thread has locked <code>counterLock</code> no other thread can increase <code>amount</code></li>
+<li>This is a <em>deadlock</em></li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="conditions">Conditions</h2>
+<ul>
+<li>Conditions allow threads to temporarily unlock locks whilst they await some condition to be fulfilled</li>
+<li>In this case, we'd like to temporarily unlock within a thread that is waiting to <code>decrement</code></li>
+<li>Conditions are created from locks</li>
+<li>We can add a condition to <code>MyCounter</code> as follows:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">private</span> ReentrantLock counterLock = <span class="kw">new</span> ReentrantLock();
+<span class="kw">private</span> Condition bigEnough = counterLock.<span class="fu">newCondition</span>();</code></pre></div>
+<hr />
+<ul>
+<li>Threads can await the condition through the <code>Condition.await()</code> method</li>
+<li>We add this to our <code>decrement</code> method:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">decrement</span>(<span class="dt">int</span> amount) {
+    counterLock.<span class="fu">lock</span>();
+    <span class="kw">try</span> {
+        <span class="kw">while</span>(count &lt; amount) {
+            bigEnough.<span class="fu">await</span>();
+        }
+        count -= amount;
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Subtracting &quot;</span> + amount + <span class="st">&quot;, result &quot;</span> + count);
+    }<span class="kw">catch</span> (InterruptedException e) {
+        <span class="co">// Fall through</span>
+    }<span class="kw">finally</span> {
+        counterLock.<span class="fu">unlock</span>();
+    }
+}</code></pre></div>
+<hr />
+<ul>
+<li>A thread calling decrement when <code>count&lt;amount</code> will wait until another thread invokes the <code>Condition.signalAll()</code> method.</li>
+<li>We put this method into the increment method:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">increment</span>(<span class="dt">int</span> amount) {
+    counterLock.<span class="fu">lock</span>();
+    <span class="kw">try</span> {
+        count +=amount;
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Adding &quot;</span> + amount + <span class="st">&quot;, result &quot;</span> + count);
+        bigEnough.<span class="fu">signalAll</span>();
+    }<span class="kw">finally</span> {
+        counterLock.<span class="fu">unlock</span>();
+    }
+}</code></pre></div>
+<hr />
+<ul>
+<li>Whenever an increment is made, all threads waiting on this condition are restarted.</li>
+<li>Note that the <code>signalAll()</code> method doesn't mean that <code>amount</code> is big enough
+<ul>
+<li>The syntax in <code>decrement()</code> means that <code>signalAll()</code> will cause the thread to check again.</li>
+<li>It might just end up invoking <code>await()</code> again.</li>
+</ul></li>
+<li>Run <code>CounterDecounter3</code> and verify that <code>count</code> never becomes negative</li>
+</ul>
+<hr />
+<h1 id="threads-in-swing">Threads in Swing</h1>
+<ul>
+<li>In general Swing is not thread safe
+<ul>
+<li>You can't use normal threads</li>
+<li>Ignore everything up until now!</li>
+</ul></li>
+<li>But, Swing does give you threading capabilities</li>
+<li>First, why do we need threads in Swing?
+<ul>
+<li><code>SwingThread</code></li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import javax.swing.JFrame;</span>
+<span class="kw">import javax.swing.JButton;</span>
+<span class="kw">import java.awt.event.ActionListener;</span>
+<span class="kw">import java.awt.event.ActionEvent;</span>
+<span class="kw">import javax.swing.JTextField;</span>
+<span class="kw">import java.awt.GridBagLayout;</span>
+
+<span class="kw">public</span> <span class="kw">class</span> SwingThread <span class="kw">extends</span> JFrame <span class="kw">implements</span> ActionListener {
+    <span class="kw">private</span> <span class="dt">final</span> JButton startButton,stopButton;
+    <span class="kw">private</span> <span class="dt">final</span> JTextField countField,outField;
+    <span class="kw">public</span> <span class="fu">SwingThread</span>() {
+        <span class="kw">super</span>(<span class="st">&quot;Swing Thread&quot;</span>);
+        <span class="fu">setDefaultCloseOperation</span>(JFrame.<span class="fu">EXIT_ON_CLOSE</span>);
+        <span class="fu">getContentPane</span>().<span class="fu">setLayout</span>(<span class="kw">new</span> GridBagLayout());
+
+        startButton = <span class="fu">makeButton</span>(<span class="st">&quot;Start&quot;</span>);
+        stopButton = <span class="fu">makeButton</span>(<span class="st">&quot;Stop&quot;</span>);
+
+        countField = <span class="fu">makeText</span>();
+        outField = <span class="fu">makeText</span>();
+        <span class="fu">pack</span>();
+        <span class="fu">setVisible</span>(<span class="kw">true</span>);
+    }
+    <span class="kw">private</span> JTextField <span class="fu">makeText</span>() {
+        JTextField b = <span class="kw">new</span> JTextField(<span class="dv">30</span>);
+        <span class="fu">getContentPane</span>().<span class="fu">add</span>(b);
+        <span class="kw">return</span> b;
+    }
+    <span class="kw">private</span> JButton <span class="fu">makeButton</span>(String caption) {
+        JButton b = <span class="kw">new</span> JButton(caption);
+        b.<span class="fu">setActionCommand</span>(caption);
+        b.<span class="fu">addActionListener</span>(<span class="kw">this</span>);
+        <span class="fu">getContentPane</span>().<span class="fu">add</span>(b);
+        <span class="kw">return</span> b;
+    }
+
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">actionPerformed</span>(ActionEvent e) {
+        <span class="kw">if</span>(e.<span class="fu">getActionCommand</span>() == <span class="st">&quot;Start&quot;</span>) {
+            outField.<span class="fu">setText</span>(<span class="st">&quot;You pressed start&quot;</span>);
+            <span class="fu">startCounting</span>();
+        }<span class="kw">else</span> <span class="kw">if</span>(e.<span class="fu">getActionCommand</span>() == <span class="st">&quot;Stop&quot;</span>) {
+            outField.<span class="fu">setText</span>(<span class="st">&quot;You pressed stop&quot;</span>);
+        }
+    }
+    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">startCounting</span>() {
+        <span class="kw">try</span> {
+            <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;<span class="dv">100</span>;i++) {
+                countField.<span class="fu">setText</span>(String<span class="fu">.format</span>(<span class="st">&quot;</span><span class="ch">%d</span><span class="st">&quot;</span>,i));
+                Thread.<span class="fu">sleep</span>(<span class="dv">100</span>);
+            }
+        }<span class="kw">catch</span>(InterruptedException e) {
+
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        <span class="kw">new</span> <span class="fu">SwingThread</span>();
+    }
+}</code></pre></div>
+<p>When this code is run, the system waits patiently until start is pressed. When this happens, control is passed to the <code>actionPerformed()</code> method. This method sets the text in <code>outField</code> and then starts the counter. During counting, the code updates <code>countField</code> and sleeps a lot.</p>
+<p>You might guess that on pressing <code>start</code> you would see the text in <code>outField</code> immediately and then see the text in <code>countField</code> gradually increasing. Unfortunately, this is not what happens. When we call <code>JTextField.setText()</code> we are changing the text that is stored. For the screen to update, Java must do various other processes (hidden from us). These can't be done if the system is busy. In this case, the system is busy counting and so nothing changes on screen until the counting has finished, when we see the final value and 'you pressed start'.</p>
+<p>To overcome this, we need to use the thread objects that swing provides.</p>
+<hr />
+<ul>
+<li>System becomes unresponsive whilst counting</li>
+<li>Nothing updates until counting has finished
+<ul>
+<li>until we exit the actionPerformed method</li>
+</ul></li>
+<li>We need threads</li>
+</ul>
+<hr />
+<h2 id="the-event-dispatch-thread">The <code>event dispatch</code> thread</h2>
+<ul>
+<li>Event handling code in Swing runs on the event dispatch thread
+<ul>
+<li>e.g. actionListeners</li>
+</ul></li>
+<li>Things on this thread should be <em>short tasks</em>
+<ul>
+<li>otherwise system becomes unresponsive</li>
+</ul></li>
+<li>Note: some swing component methods can be invoked from any thread (marked as <em>thread safe</em> in API)
+<ul>
+<li>Why isn't all of swing thread safe? <a href="https://weblogs.java.net/blog/kgh/archive/2004/10/multithreaded_t.html">read this</a></li>
+</ul></li>
+</ul>
+<hr />
+<p>In our previous code, we unwittingly put the counter on the event dispatch thread and the system became unresponsive. Only very fast things should go on this thread (e.g. starting other threads that can run in the backgroun).</p>
+<h2 id="longer-jobs---the-swingworker-class">Longer jobs - the <code>SwingWorker</code> class</h2>
+<ul>
+<li>Long tasks should not be run on the event dispatch thread</li>
+<li>Instead we use worker threads</li>
+<li>Created by extending <code>SwingWorker</code></li>
+<li>The new class must extend:
+<ul>
+<li><code>doInBackground()</code></li>
+</ul></li>
+<li>And can also use:
+<ul>
+<li><code>publish()</code> and <code>process()</code> to display interim results</li>
+<li>done() to invoke a method on the event dispatch thread when the task is complete.</li>
+</ul></li>
+<li><code>Counter.java</code></li>
+</ul>
+<hr />
+<ul>
+<li>Note that <code>SwingWorker</code> takes two types:
+<ul>
+<li><code>SwingWorker&lt;A,B&gt;</code></li>
+<li>A: the return value</li>
+<li>B: the object passed by publish</li>
+</ul></li>
+<li>Note also that <code>process(List&lt;B&gt; b)</code> takes a list
+<ul>
+<li>There may be many calls to <code>publish</code> before <code>process</code> is called</li>
+</ul></li>
+<li>The various Swing layout things should be things you've seen before?</li>
+</ul>
+<p><code>SwingWorker</code> objects allow us to run time consuming processes in the background without the system becoming unresponsive. When you extend the SwingWorker class, you <em>have</em> to implement <code>doInBackground()</code> which is the method called when we invoke the <code>execute()</code> method of the object. <code>doInBackground()</code> requires to object types to be specified: the first is its return value, the second is the type of object used by <code>publish()</code>. Other methods can also be implemented:</p>
+<ul>
+<li><code>publish()</code>: this allows us to display preliminary results as our background task is running. Objects passed to publish can be retrieved when the system invokes <code>process()</code> ...</li>
+<li><code>process()</code>: If we use <code>publish()</code> in <code>doInBackground()</code>, the system will periodically invoke <code>process()</code>. Process is passed a <code>List</code> of the objects passed to <code>publish()</code>. Often we'll only be interested in the last one. If you wanted to say update a <code>JTextArea</code> with current status, you should do so in <code>process()</code>.</li>
+<li><code>done()</code>: This method is invoked on the event dispatch thread when <code>doInBackground()</code> has finished -- useful for changing the enabled status of buttons etc, or displaying a message. Remember though, it's on the event dispatch thread so shouldn't be used to long tasks.</li>
+</ul>
+<hr />
+<h2 id="other-swing-thread-operations">Other swing thread operations</h2>
+<ul>
+<li>Initial threads (in <code>SwingUtilities</code>):
+<ul>
+<li><code>invokeLater(Runnable go)</code> runs <code>go</code> on the event dispatch thread.</li>
+<li><code>invokeAndWait(Runnable go)</code> runs <code>go</code> on the event dispatch thread and then waits for it to finish.</li>
+<li>Typically, these are used for starting the GUI (i.e. creating a <code>JFrame</code> object):</li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        SwingUtilities.<span class="fu">invokeLater</span>(<span class="kw">new</span> Runnable() {
+            <span class="kw">new</span> <span class="fu">SwingThread</span>();
+        });
+    }</code></pre></div>
+<p>Initial threads are typically just used for initially creating GUI objects. They put runnable objects onto the event dispatch thread. It is good practise to always create your initial objects in this manner.</p>
+<hr />
+<h2 id="swing-example---game-of-life">Swing example - Game Of Life</h2>
+<ul>
+<li>Class exercise: building a Game of Life simulator</li>
+<li>Details: <a href="http://bit.ly/1aDRRYs">Conway's Game of life</a></li>
+<li>We need a responsive application that animates a 'world' and allows users to start, stop, toggle cells, change speed, clear the world and randomise the world</li>
+</ul>
+</body>
+</html>
