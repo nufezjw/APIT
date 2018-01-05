@@ -68,6 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#interrupted-exception">Interrupted Exception</a></li>
 <li><a href="#sleeping-threads">Sleeping threads</a></li>
 <li><a href="#join">Join</a></li>
+<li><a href="#why">Why?</a></li>
 <li><a href="#the-benefits-of-parallel-processing">The benefits of parallel processing</a></li>
 <li><a href="#merge-sort">Merge sort</a></li>
 <li><a href="#shared-variables">Shared variables</a></li>
@@ -80,7 +81,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#the-event-dispatch-thread">The <code>event dispatch</code> thread</a></li>
 <li><a href="#longer-jobs---the-swingworker-class">Longer jobs - the <code>SwingWorker</code> class</a></li>
 <li><a href="#other-swing-thread-operations">Other swing thread operations</a></li>
-<li><a href="#swing-example---game-of-life">Swing example - Game Of Life</a></li>
+<li><a href="#swing-example-2---game-of-life">Swing example 2 - Game Of Life</a></li>
 </ul></li>
 </ul>
 </div>
@@ -305,7 +306,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> MainThread <span class="kw">extends</span> Thread{
     <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
         <span class="kw">try</span> {
-            Thread.<span class="fu">sleep</span>(<span class="dv">100</span>);
+            Thread.<span class="fu">sleep</span>(<span class="dv">1000</span>);
         }<span class="kw">catch</span>(InterruptedException e) {}
         System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Thread finished&quot;</span>);
     }
@@ -314,6 +315,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
         System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;THE END&quot;</span>);
     }
 }</code></pre></div>
+<p>What's the implication?</p>
+<hr />
+<p>You might think that <code>THE END</code> only appears once all the threads have finished. But actually it happends immediately after all threads have been started. This shows us that <code>main</code> is itself running on a thread and it can finish <strong>before</strong> the other threads. We will see how to make <code>main</code> wait using the <code>join()</code> method soon.</p>
 <h2 id="thread-names">Thread names</h2>
 <ul>
 <li>In our examples, we passed a message to a thread to help identify it</li>
@@ -439,6 +443,27 @@ Thread t = <span class="kw">new</span> Thread(<span class="st">&quot;my name&quo
 </ul></li>
 </ul>
 <hr />
+<p>The following code starts 5 threads and then waits for each in turn to stop:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">MyThread[] m = <span class="kw">new</span> MyThread[<span class="dv">5</span>];
+<span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;<span class="dv">5</span>;i++) {
+    m[i] = <span class="kw">new</span> <span class="fu">MyThread</span>();
+    m[i].<span class="fu">start</span>();
+}
+<span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;<span class="dv">5</span>;i++) { 
+    m[i].<span class="fu">join</span>();
+}</code></pre></div>
+<p><code>main</code> doesn't finish until after the last thread</p>
+<hr />
+<p><strong>Note</strong>: the following is not good:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">MyThread[] m = <span class="kw">new</span> MyThread[<span class="dv">5</span>];
+<span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;<span class="dv">5</span>;i++) {
+    m[i] = <span class="kw">new</span> <span class="fu">MyThread</span>();
+    m[i].<span class="fu">start</span>();
+    m[i].<span class="fu">join</span>();
+}</code></pre></div>
+<h2 id="why">Why?</h2>
+<p>After starting the first thread, the thread running <code>main</code> then waits for it to finish before starting the second one! This is a very common mistake.</p>
+<hr />
 <h2 id="the-benefits-of-parallel-processing">The benefits of parallel processing</h2>
 <ul>
 <li>Many machines have multiple cores / processors</li>
@@ -535,6 +560,12 @@ Thread t = <span class="kw">new</span> Thread(<span class="st">&quot;my name&quo
     }</code></pre></div>
 <p>If all works correctly, we should see 100 times 1000 (=100000). But we don't. Each time we run, we see something different (try it), always below 100000. What's happening?</p>
 <hr />
+<ul>
+<li>If we have many threads accessing the same shared object we don't always see what we might expect.</li>
+<li>In this example, if we have 100 threads all incrementing the same counter 1000 times then we should see 100000 at the end.</li>
+<li>But we don't....any ideas why not?</li>
+</ul>
+<hr />
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
     <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n;i++) {
         <span class="dt">int</span> temp = count.<span class="fu">getCount</span>();
@@ -573,7 +604,7 @@ Thread t = <span class="kw">new</span> Thread(<span class="st">&quot;my name&quo
 <h2 id="synchronized">Synchronized</h2>
 <ul>
 <li>To overcome race conditions, we must <em>lock</em> objects.</li>
-<li>All objects have an associated monitor that can be locked or unlocked (we don't see this)</li>
+<li>All objects have an associated monitor that can be locked or unlocked (we don't see the monitor, but it is there in the background)</li>
 <li>A thread can lock a monitor, ensuring no other threads can modify it</li>
 <li>Other threads trying are blocked until the lock is released</li>
 <li>The easiest way is with <code>synchonized</code> blocks and methods.</li>
@@ -648,7 +679,7 @@ Thread t = <span class="kw">new</span> Thread(<span class="st">&quot;my name&quo
 <li>What if two threads are both waiting for one another to release a lock?</li>
 <li>The program will hang indefinitely</li>
 <li>This is a <em>deadlock</em></li>
-<li>For example, suppose adding another object to out <code>CounterExample</code> that decrements <code>MyCounter</code>
+<li>For example, suppose adding another object to our <code>CounterExample</code> that decrements <code>MyCounter</code>
 <ul>
 <li>If we set the system up so that in total the same amount is incremented and decremented then <code>count</code> will sometimes become negative (depending on ordering of events)</li>
 <li>See <code>CounterDecounter</code></li>
@@ -885,7 +916,7 @@ Thread t = <span class="kw">new</span> Thread(<span class="st">&quot;my name&quo
     }</code></pre></div>
 <p>Initial threads are typically just used for initially creating GUI objects. They put runnable objects onto the event dispatch thread. It is good practise to always create your initial objects in this manner.</p>
 <hr />
-<h2 id="swing-example---game-of-life">Swing example - Game Of Life</h2>
+<h2 id="swing-example-2---game-of-life">Swing example 2 - Game Of Life</h2>
 <ul>
 <li>Class exercise: building a Game of Life simulator</li>
 <li>Details: <a href="http://bit.ly/1aDRRYs">Conway's Game of life</a></li>

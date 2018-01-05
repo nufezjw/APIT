@@ -306,6 +306,12 @@ What's the implication?
 
 ----
 
+notesonly
+
+You might think that `THE END` only appears once all the threads have finished. But actually it happends immediately after all threads have been started. This shows us that `main` is itself running on a thread and it can finish **before** the other threads. We will see how to make `main` wait using the `join()` method soon.
+
+endnotesonly
+
 ## Thread names
 
 - In our examples, we passed a message to a thread to help identify it
@@ -458,6 +464,45 @@ public void run() {
 
 ----
 
+The following code starts 5 threads and then waits for each in turn to stop:
+
+~~~~{.java}
+MyThread[] m = new MyThread[5];
+for(int i=0;i<5;i++) {
+	m[i] = new MyThread();
+	m[i].start();
+}
+for(int i=0;i<5;i++) { 
+	m[i].join();
+}
+~~~~
+
+`main` doesn't finish until after the last thread
+
+----
+
+**Note**: the following is not good:
+
+~~~~{.java}
+MyThread[] m = new MyThread[5];
+for(int i=0;i<5;i++) {
+	m[i] = new MyThread();
+	m[i].start();
+	m[i].join();
+}
+~~~~
+
+Why?
+----
+
+notesonly
+
+After starting the first thread, the thread running `main` then waits for it to finish before starting the second one! This is a very common mistake.
+
+endnotesonly
+
+----
+
 ## The benefits of parallel processing
 
 - Many machines have multiple cores / processors
@@ -562,6 +607,12 @@ If all works correctly, we should see 100 times 1000 (=100000). But we don't. Ea
 
 endnotesonly
 
+----
+
+- If we have many threads accessing the same shared object we don't always see what we might expect.
+- In this example, if we have 100 threads all incrementing the same counter 1000 times then we should see 100000 at the end.
+- But we don't....any ideas why not?
+
 ____
 
 ~~~~ {.java}
@@ -602,7 +653,7 @@ The problem is found in the `run()` method:
 ## Synchronized
 
 - To overcome race conditions, we must *lock* objects.
-- All objects have an associated monitor that can be locked or unlocked (we don't see this)
+- All objects have an associated monitor that can be locked or unlocked (we don't see the monitor, but it is there in the background)
 - A thread can lock a monitor, ensuring no other threads can modify it
 - Other threads trying are blocked until the lock is released
 - The easiest way is with `synchonized` blocks and methods.
@@ -682,7 +733,7 @@ finally {
 - What if two threads are both waiting for one another to release a lock?
 - The program will hang indefinitely
 - This is a *deadlock*
-- For example, suppose adding another object to out `CounterExample` that decrements `MyCounter`
+- For example, suppose adding another object to our `CounterExample` that decrements `MyCounter`
 	- If we set the system up so that in total the same amount is incremented and decremented then `count` will sometimes become negative (depending on ordering of events)
 	- See `CounterDecounter`
 
@@ -938,7 +989,7 @@ endnotesonly
 
 ----
 
-## Swing example - Game Of Life
+## Swing example 2 - Game Of Life
 
 - Class exercise: building a Game of Life simulator
 - Details: [Conway's Game of life](http://bit.ly/1aDRRYs)

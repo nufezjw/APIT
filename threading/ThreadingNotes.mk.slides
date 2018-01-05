@@ -170,7 +170,7 @@ Can you predict the output of this?
 public class MainThread extends Thread{
 	public void run() {
 		try {
-			Thread.sleep(100);
+			Thread.sleep(1000);
 		}catch(InterruptedException e) {}
 		System.out.println("Thread finished");
 	}
@@ -180,6 +180,11 @@ public class MainThread extends Thread{
 	}
 }
 ~~~~
+
+What's the implication?
+
+----
+
 
 ## Thread names
 
@@ -251,6 +256,40 @@ public void run() {
 
 ----
 
+The following code starts 5 threads and then waits for each in turn to stop:
+
+~~~~{.java}
+MyThread[] m = new MyThread[5];
+for(int i=0;i<5;i++) {
+	m[i] = new MyThread();
+	m[i].start();
+}
+for(int i=0;i<5;i++) { 
+	m[i].join();
+}
+~~~~
+
+`main` doesn't finish until after the last thread
+
+----
+
+**Note**: the following is not good:
+
+~~~~{.java}
+MyThread[] m = new MyThread[5];
+for(int i=0;i<5;i++) {
+	m[i] = new MyThread();
+	m[i].start();
+	m[i].join();
+}
+~~~~
+
+Why?
+----
+
+
+----
+
 ## The benefits of parallel processing
 
 - Many machines have multiple cores / processors
@@ -282,6 +321,12 @@ public void run() {
 - See `CounterExample`
 - Why can't we just pass an `Integer` around instead of a `MyCounter` object? (see [Immutable objects](http://www.javapractices.com/topic/TopicAction.do?Id=29) and [Immutable objects 2](http://docs.oracle.com/javase/tutorial/essential/concurrency/immutable.html))
 
+
+----
+
+- If we have many threads accessing the same shared object we don't always see what we might expect.
+- In this example, if we have 100 threads all incrementing the same counter 1000 times then we should see 100000 at the end.
+- But we don't....any ideas why not?
 
 ____
 
@@ -323,7 +368,7 @@ The problem is found in the `run()` method:
 ## Synchronized
 
 - To overcome race conditions, we must *lock* objects.
-- All objects have an associated monitor that can be locked or unlocked (we don't see this)
+- All objects have an associated monitor that can be locked or unlocked (we don't see the monitor, but it is there in the background)
 - A thread can lock a monitor, ensuring no other threads can modify it
 - Other threads trying are blocked until the lock is released
 - The easiest way is with `synchonized` blocks and methods.
@@ -403,7 +448,7 @@ finally {
 - What if two threads are both waiting for one another to release a lock?
 - The program will hang indefinitely
 - This is a *deadlock*
-- For example, suppose adding another object to out `CounterExample` that decrements `MyCounter`
+- For example, suppose adding another object to our `CounterExample` that decrements `MyCounter`
 	- If we set the system up so that in total the same amount is incremented and decremented then `count` will sometimes become negative (depending on ordering of events)
 	- See `CounterDecounter`
 
@@ -570,7 +615,7 @@ public void increment(int amount) {
 
 ----
 
-## Swing example - Game Of Life
+## Swing example 2 - Game Of Life
 
 - Class exercise: building a Game of Life simulator
 - Details: [Conway's Game of life](http://bit.ly/1aDRRYs)
